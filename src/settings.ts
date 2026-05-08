@@ -4,13 +4,11 @@ import type SimplePinnedFilesPlugin from "./main";
 export interface SimplePinnedFilesSettings {
   pinnedPaths: string[];
   openViewOnStartup: boolean;
-  showFullPath: boolean;
 }
 
 export const DEFAULT_SETTINGS: SimplePinnedFilesSettings = {
   pinnedPaths: [],
   openViewOnStartup: true,
-  showFullPath: false,
 };
 
 export class SimplePinnedFilesSettingTab extends PluginSettingTab {
@@ -34,21 +32,6 @@ export class SimplePinnedFilesSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.openViewOnStartup = value;
             await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Show full path")
-      .setDesc(
-        "Show the full vault path under each pinned file instead of just the parent folder."
-      )
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showFullPath)
-          .onChange(async (value) => {
-            this.plugin.settings.showFullPath = value;
-            await this.plugin.saveSettings();
-            this.plugin.refreshView();
           })
       );
 

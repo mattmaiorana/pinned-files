@@ -1,4 +1,4 @@
-import { ItemView, Menu, setIcon, TFile, WorkspaceLeaf } from "obsidian";
+import { ItemView, Menu, setIcon, setTooltip, TFile, WorkspaceLeaf } from "obsidian";
 import type SimplePinnedFilesPlugin from "./main";
 
 export const VIEW_TYPE_PINNED_FILES = "simple-pinned-files-view";
@@ -60,18 +60,15 @@ export class PinnedFilesView extends ItemView {
       if (path === activePath) row.addClass("is-active");
       if (!file) row.addClass("is-missing");
 
-      const main = row.createDiv({ cls: "simple-pinned-files-row-main" });
-      main.createDiv({
+      row.createDiv({
         cls: "simple-pinned-files-title",
-        text: this.titleFromPath(path, file),
-      });
-      main.createDiv({
-        cls: "simple-pinned-files-subtitle",
-        text: this.subtitleFromPath(path),
+        text: this.rowText(path, file),
       });
 
       const iconEl = row.createDiv({ cls: "simple-pinned-files-pin-icon" });
       setIcon(iconEl, "pin");
+
+      setTooltip(row, path, { delay: 1000, placement: "top" });
 
       row.addEventListener("click", async (evt) => {
         if (!file) return;
@@ -81,15 +78,6 @@ export class PinnedFilesView extends ItemView {
       row.addEventListener("contextmenu", (evt) => {
         evt.preventDefault();
         const menu = new Menu();
-        menu.addItem((item) =>
-          item
-            .setTitle("Open")
-            .setIcon("file")
-            .onClick(async () => {
-              if (!file) return;
-              await this.plugin.openPinned(path);
-            })
-        );
         menu.addItem((item) =>
           item
             .setTitle("Unpin")
@@ -114,16 +102,10 @@ export class PinnedFilesView extends ItemView {
     });
   }
 
-  private titleFromPath(path: string, file: TFile | null): string {
+  private rowText(path: string, file: TFile | null): string {
     if (file) return file.basename || file.name;
     const last = path.split("/").pop() ?? path;
     const dot = last.lastIndexOf(".");
     return dot > 0 ? last.slice(0, dot) : last;
-  }
-
-  private subtitleFromPath(path: string): string {
-    if (this.plugin.settings.showFullPath) return path;
-    const idx = path.lastIndexOf("/");
-    return idx > 0 ? path.slice(0, idx) : "/";
   }
 }
