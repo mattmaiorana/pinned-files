@@ -42,6 +42,10 @@ A small Obsidian plugin that adds a standalone Pinned Files view for quickly acc
 - Right-click a file in the File Explorer → **Pin file**
 - Right-click a pinned row in the Pinned Files view → **Open** or **Unpin**
 
+## Obsidian Sync compatibility
+
+The plugin's pin list lives in its own `data.json`, which Obsidian Sync replicates between devices. The plugin polls its own `data.json` every 5 seconds and, if an external change is detected (e.g. a synced update from another device), reloads the pinned list, refreshes the view, and updates the native File Explorer pin indicators — no plugin reload or Obsidian restart required. The reload path is read-only; local pin/unpin remains the only operation that writes to `data.json`.
+
 ## Status
 
 v1.0.0 — stable initial release.

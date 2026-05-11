@@ -13,9 +13,19 @@ import {
 import { PinnedFilesView, VIEW_TYPE_PINNED_FILES } from "./view";
 import { removeExplorerStyles, updateExplorerStyles } from "./explorer-style";
 
+const SETTINGS_RELOAD_INTERVAL_MS = 5000;
+
+function pathsEqual(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
 export default class SimplePinnedFilesPlugin extends Plugin {
   settings: SimplePinnedFilesSettings = { ...DEFAULT_SETTINGS };
   viewInstances: Set<PinnedFilesView> = new Set();
+  private saving = false;
+  private reloading = false;
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -83,6 +93,13 @@ export default class SimplePinnedFilesPlugin extends Plugin {
 
     this.addSettingTab(new SimplePinnedFilesSettingTab(this.app, this));
 
+    this.registerInterval(
+      window.setInterval(
+        () => void this.reloadSettingsFromDiskIfChanged(),
+        SETTINGS_RELOAD_INTERVAL_MS
+      )
+    );
+
     this.app.workspace.onLayoutReady(() => {
       this.updateExplorerStyles();
       if (this.settings.openViewOnStartup) {
@@ -103,7 +120,38 @@ export default class SimplePinnedFilesPlugin extends Plugin {
   }
 
   async saveSettings(): Promise<void> {
-    await this.saveData(this.settings);
+    this.saving = true;
+    try {
+      await this.saveData(this.settings);
+    } finally {
+      this.saving = false;
+    }
+  }
+
+  async reloadSettingsFromDiskIfChanged(): Promise<void> {
+    if (this.saving || this.reloading) return;
+    this.reloading = true;
+    try {
+      const raw = (await this.loadData()) as
+        | Partial<SimplePinnedFilesSettings>
+        | null;
+      const next: SimplePinnedFilesSettings = {
+        ...DEFAULT_SETTINGS,
+        ...(raw ?? {}),
+      };
+      if (!Array.isArray(next.pinnedPaths)) next.pinnedPaths = [];
+      const pinsChanged = !pathsEqual(
+        next.pinnedPaths,
+        this.settings.pinnedPaths
+      );
+      this.settings = next;
+      if (pinsChanged) {
+        this.refreshView();
+        this.updateExplorerStyles();
+      }
+    } finally {
+      this.reloading = false;
+    }
   }
 
   isPinned(path: string): boolean {

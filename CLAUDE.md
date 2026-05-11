@@ -12,6 +12,7 @@
   - rename/delete handling
   - Lucide-style pin icons
   - CSS-only native File Explorer pin indicators
+  - Obsidian Sync live reload via polling `loadData()`
 
 ## Core architecture
 
@@ -23,6 +24,17 @@
 - The plugin does not modify Obsidian's native File Explorer DOM nodes.
 - Native File Explorer pin indicators are implemented through a managed `<style>` element targeting `data-path` selectors.
 - `PinnedFilesView` instances register/unregister with the plugin so refreshes use live view instances instead of relying on `getLeavesOfType` and `instanceof` checks.
+
+## Sync / external-change live reload
+
+- Plugin data lives at `.obsidian/plugins/simple-pinned-files/data.json`. This is outside the vault file tree, so `vault.on("modify")` does not reliably fire for it on either desktop or mobile.
+- The plugin polls `loadData()` every 5 seconds via `registerInterval(window.setInterval(...))` and calls `reloadSettingsFromDiskIfChanged()`.
+- The poll compares the disk `pinnedPaths` against in-memory `pinnedPaths` (length + order-sensitive equality). If different, it replaces in-memory settings and calls `refreshView()` + `updateExplorerStyles()`.
+- **Critical invariant: the reload path must never call `saveData()`.** Local pin/unpin is the only operation that writes `data.json`. The reload path is strictly read-only to avoid sync-write loops with Obsidian Sync.
+- Two guard flags prevent races:
+  - `saving` is set around `saveData` so a poll during a local save doesn't re-read a stale snapshot.
+  - `reloading` blocks overlapping polls.
+- 5s is a deliberate trade-off: fast enough that synced pins appear within a few seconds, slow enough that polling cost is negligible (the file is tiny).
 
 ## Important lessons / constraints
 
