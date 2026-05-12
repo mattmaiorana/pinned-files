@@ -59,9 +59,8 @@ Important bug and fix to remember:
 ## Design direction
 
 - Calm, native Obsidian feel.
-- Pinned rows are gray cards by default.
-- Hover and active states use Obsidian accent fill.
-- Use Obsidian CSS variables.
+- Pinned rows match the native File Explorer's `nav-file-title` styling: transparent default, hover/active backgrounds via Obsidian's `--nav-item-*` variables. No card-style or accent-fill treatment.
+- Use Obsidian CSS variables only; avoid hardcoded theme colors.
 - Pin icons should match Obsidian/Lucide style, not emoji.
 
 ## Useful commands

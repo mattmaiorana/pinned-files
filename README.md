@@ -7,9 +7,9 @@ A small Obsidian plugin that adds a standalone Pinned Files view for quickly acc
 - Custom Pinned Files sidebar view
 - Pin/unpin current file command
 - File Explorer context menu item: Pin file / Unpin file
-- Pinned rows show file name and parent folder/full path
+- Pinned rows show the file basename; the full vault path appears in an Obsidian tooltip after a short hover
 - One-click open from pinned list
-- Right-click pinned row menu: Open / Unpin
+- Right-click pinned row menu: Unpin
 - Handles rename/delete of pinned files and folders
 - Optional native File Explorer pin indicators using CSS-only decoration
 
@@ -40,7 +40,7 @@ A small Obsidian plugin that adds a standalone Pinned Files view for quickly acc
 
 - Open command palette → **Open Simple Pinned Files**
 - Right-click a file in the File Explorer → **Pin file**
-- Right-click a pinned row in the Pinned Files view → **Open** or **Unpin**
+- Right-click a pinned row in the Pinned Files view → **Unpin**
 
 ## Obsidian Sync compatibility
 

@@ -25,6 +25,12 @@ export class PinnedFilesView extends ItemView {
 
   async onOpen(): Promise<void> {
     this.plugin.viewInstances.add(this);
+    this.registerDomEvent(this.contentEl, "click", (evt) =>
+      this.handleContentClick(evt)
+    );
+    this.registerDomEvent(this.contentEl, "contextmenu", (evt) =>
+      this.handleContentContextMenu(evt)
+    );
     this.render();
   }
 
@@ -69,25 +75,6 @@ export class PinnedFilesView extends ItemView {
       setIcon(iconEl, "pin");
 
       setTooltip(row, path, { delay: 1000, placement: "top" });
-
-      row.addEventListener("click", async (evt) => {
-        if (!file) return;
-        await this.plugin.openPinned(path, evt);
-      });
-
-      row.addEventListener("contextmenu", (evt) => {
-        evt.preventDefault();
-        const menu = new Menu();
-        menu.addItem((item) =>
-          item
-            .setTitle("Unpin")
-            .setIcon("pin-off")
-            .onClick(async () => {
-              await this.plugin.unpinPath(path);
-            })
-        );
-        menu.showAtMouseEvent(evt);
-      });
     }
   }
 
@@ -100,6 +87,41 @@ export class PinnedFilesView extends ItemView {
       if (row.dataset.path === activePath) row.addClass("is-active");
       else row.removeClass("is-active");
     });
+  }
+
+  private rowFromEvent(evt: MouseEvent): HTMLElement | null {
+    const target = evt.target as HTMLElement | null;
+    if (!target) return null;
+    const row = target.closest<HTMLElement>(".simple-pinned-files-row");
+    if (!row || !this.contentEl.contains(row)) return null;
+    return row;
+  }
+
+  private handleContentClick(evt: MouseEvent): void {
+    const row = this.rowFromEvent(evt);
+    if (!row) return;
+    if (row.classList.contains("is-missing")) return;
+    const path = row.dataset.path;
+    if (!path) return;
+    void this.plugin.openPinned(path, evt);
+  }
+
+  private handleContentContextMenu(evt: MouseEvent): void {
+    const row = this.rowFromEvent(evt);
+    if (!row) return;
+    const path = row.dataset.path;
+    if (!path) return;
+    evt.preventDefault();
+    const menu = new Menu();
+    menu.addItem((item) =>
+      item
+        .setTitle("Unpin")
+        .setIcon("pin-off")
+        .onClick(async () => {
+          await this.plugin.unpinPath(path);
+        })
+    );
+    menu.showAtMouseEvent(evt);
   }
 
   private rowText(path: string, file: TFile | null): string {

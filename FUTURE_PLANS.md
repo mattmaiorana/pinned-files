@@ -1,6 +1,6 @@
 # Future Plans
 
-Possible future improvements for Simple Pinned Files. These are **not commitments for v1.0.0** — just notable ideas to consider later.
+Possible future improvements for Simple Pinned Files. These are **not commitments for any specific version** — just notable ideas to consider later.
 
 ## Near-term polish
 

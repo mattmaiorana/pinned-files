@@ -21,11 +21,25 @@ function pathsEqual(a: string[], b: string[]): boolean {
   return true;
 }
 
+function normalizePinnedPaths(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const entry of value) {
+    if (typeof entry !== "string") continue;
+    if (seen.has(entry)) continue;
+    seen.add(entry);
+    result.push(entry);
+  }
+  return result;
+}
+
 export default class SimplePinnedFilesPlugin extends Plugin {
   settings: SimplePinnedFilesSettings = { ...DEFAULT_SETTINGS };
   viewInstances: Set<PinnedFilesView> = new Set();
-  private saving = false;
+  private saveCount = 0;
   private reloading = false;
+  private unloaded = false;
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -109,6 +123,7 @@ export default class SimplePinnedFilesPlugin extends Plugin {
   }
 
   onunload(): void {
+    this.unloaded = true;
     removeExplorerStyles();
   }
 
@@ -116,30 +131,36 @@ export default class SimplePinnedFilesPlugin extends Plugin {
     const data = (await this.loadData()) as
       | Partial<SimplePinnedFilesSettings>
       | null;
-    this.settings = { ...DEFAULT_SETTINGS, ...(data ?? {}) };
+    const merged: SimplePinnedFilesSettings = {
+      ...DEFAULT_SETTINGS,
+      ...(data ?? {}),
+    };
+    merged.pinnedPaths = normalizePinnedPaths(merged.pinnedPaths);
+    this.settings = merged;
   }
 
   async saveSettings(): Promise<void> {
-    this.saving = true;
+    this.saveCount++;
     try {
       await this.saveData(this.settings);
     } finally {
-      this.saving = false;
+      this.saveCount--;
     }
   }
 
   async reloadSettingsFromDiskIfChanged(): Promise<void> {
-    if (this.saving || this.reloading) return;
+    if (this.unloaded || this.saveCount > 0 || this.reloading) return;
     this.reloading = true;
     try {
       const raw = (await this.loadData()) as
         | Partial<SimplePinnedFilesSettings>
         | null;
+      if (this.unloaded) return;
       const next: SimplePinnedFilesSettings = {
         ...DEFAULT_SETTINGS,
         ...(raw ?? {}),
       };
-      if (!Array.isArray(next.pinnedPaths)) next.pinnedPaths = [];
+      next.pinnedPaths = normalizePinnedPaths(next.pinnedPaths);
       const pinsChanged = !pathsEqual(
         next.pinnedPaths,
         this.settings.pinnedPaths
