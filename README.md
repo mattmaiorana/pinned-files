@@ -11,7 +11,7 @@ A small Obsidian plugin that adds a standalone Pinned Files view for quickly acc
 - One-click open from pinned list
 - Right-click pinned row menu: Unpin
 - Handles rename/delete of pinned files and folders
-- Optional native File Explorer pin indicators using CSS-only decoration
+- Native File Explorer pin indicators using CSS-only decoration
 
 ## Non-goals / intentional simplicity
 
@@ -21,31 +21,72 @@ A small Obsidian plugin that adds a standalone Pinned Files view for quickly acc
 - Does not use frontmatter or bookmarks as the source of truth
 - Does not use Svelte/React
 
-## Installation (manual testing)
+## Screenshots
 
-1. Run `npm install`
-2. Run `npm run build`
-3. Copy `manifest.json`, `main.js`, and `styles.css` into:
+_Screenshots can be added here in a future release._
+
+## Installation
+
+### From a GitHub release
+
+Each release on GitHub includes the three files Obsidian needs:
+
+- `manifest.json`
+- `main.js`
+- `styles.css`
+
+To install manually:
+
+1. Create the folder `<vault>/.obsidian/plugins/simple-pinned-files/` in your vault.
+2. Download `manifest.json`, `main.js`, and `styles.css` from the latest [release](../../releases) and place them in that folder.
+3. In Obsidian → Settings → Community plugins, enable **Simple Pinned Files**.
+
+### From source
+
+1. Clone this repository.
+2. Run `npm install`.
+3. Run `npm run build`.
+4. Copy `manifest.json`, `main.js`, and `styles.css` into:
    ```
    <vault>/.obsidian/plugins/simple-pinned-files/
    ```
-4. Enable the plugin in Obsidian → Settings → Community plugins.
+5. Enable the plugin in Obsidian → Settings → Community plugins.
 
-## Development
+## Settings
 
-- `npm run dev` — watch-mode build
-- `npm run build` — production build (type-checks then bundles)
+- **Add Pinned Files to sidebar on startup** — when enabled, the Pinned Files view is added to the left sidebar at Obsidian startup. The view will not steal focus from your active sidebar tab.
+- **Clear pinned files** — removes every entry from the pinned list. This does not delete the files themselves; it only clears the plugin's record of which files are pinned.
 
 ## Basic usage
 
 - Open command palette → **Open Simple Pinned Files**
-- Right-click a file in the File Explorer → **Pin file**
+- Right-click a file in the File Explorer → **Pin file** / **Unpin file**
+- Single-click a pinned row to open the file; Cmd/Ctrl-click to open in a new tab
 - Right-click a pinned row in the Pinned Files view → **Unpin**
 
 ## Obsidian Sync compatibility
 
 The plugin's pin list lives in its own `data.json`, which Obsidian Sync replicates between devices. The plugin polls its own `data.json` every 5 seconds and, if an external change is detected (e.g. a synced update from another device), reloads the pinned list, refreshes the view, and updates the native File Explorer pin indicators — no plugin reload or Obsidian restart required. The reload path is read-only; local pin/unpin remains the only operation that writes to `data.json`.
 
+## Data safety
+
+This plugin is deliberately conservative about what it touches:
+
+- It **does not** create, delete, rename, move, or modify any notes, attachments, folders, frontmatter, or bookmarks.
+- It **does not** modify Obsidian's native File Explorer DOM. Pin indicators are added via a single managed `<style>` element using `pointer-events: none`, so native click/right-click/drag behavior is unaffected.
+- The only persistent write is the plugin's own settings file at `<vault>/.obsidian/plugins/simple-pinned-files/data.json` via Obsidian's `saveData()` API.
+- Vault rename and delete event handlers are listeners that update the in-memory list of pinned path strings. They never originate a vault mutation.
+- The plugin makes no network requests, spawns no child processes, and reads no files outside its own settings data.
+
+## Development
+
+- `npm run dev` — watch-mode build
+- `npm run build` — production build (type-checks then bundles)
+
 ## Status
 
-v1.0.2 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes.
+v1.0.2 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes and [FUTURE_PLANS.md](FUTURE_PLANS.md) for ideas under consideration.
+
+## License
+
+[MIT](LICENSE) © Matt Maiorana

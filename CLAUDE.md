@@ -31,10 +31,12 @@
 - The plugin polls `loadData()` every 5 seconds via `registerInterval(window.setInterval(...))` and calls `reloadSettingsFromDiskIfChanged()`.
 - The poll compares the disk `pinnedPaths` against in-memory `pinnedPaths` (length + order-sensitive equality). If different, it replaces in-memory settings and calls `refreshView()` + `updateExplorerStyles()`.
 - **Critical invariant: the reload path must never call `saveData()`.** Local pin/unpin is the only operation that writes `data.json`. The reload path is strictly read-only to avoid sync-write loops with Obsidian Sync.
-- Two guard flags prevent races:
-  - `saving` is set around `saveData` so a poll during a local save doesn't re-read a stale snapshot.
+- Three guards prevent races and unload glitches:
+  - `saveCount` is a refcount around `saveData`. The reload bails while any save is in flight, so concurrent or overlapping saves cannot expose a stale-read window.
   - `reloading` blocks overlapping polls.
+  - `unloaded` is set first thing in `onunload()` and re-checked after the `await this.loadData()` inside the poll, so an in-flight reload cannot re-create the explorer `<style>` after the plugin has been disabled.
 - 5s is a deliberate trade-off: fast enough that synced pins appear within a few seconds, slow enough that polling cost is negligible (the file is tiny).
+- Loaded `pinnedPaths` is run through `normalizePinnedPaths` on both `loadSettings` and `reloadSettingsFromDiskIfChanged`: non-arrays become `[]`, non-string entries are dropped, duplicates are removed while preserving first-occurrence order. Normalization is in-memory only — it never writes back.
 
 ## Important lessons / constraints
 
@@ -48,13 +50,20 @@
 
 ## Known bug history
 
-Important bug and fix to remember:
+Important bugs and fixes to remember:
 
 - **Bug:** pinned file sometimes required a second click/action to appear or open.
 - **Cause 1:** Obsidian `DeferredView` made `getLeavesOfType` + `instanceof` unreliable for refreshing the view.
 - **Fix 1:** plugin tracks live `PinnedFilesView` instances in a `Set`.
 - **Cause 2:** `active-leaf-change` was rebuilding the row DOM between `mousedown` and `mouseup`, causing the `click` event to miss the original row.
 - **Fix 2:** `active-leaf-change` now only toggles active classes via `updateActiveStates`; full refresh is reserved for list changes like pin/unpin/rename/delete.
+- **Fix 2b (1.0.2):** even with `active-leaf-change` narrowed, *any* refresh (polling reload, vault rename/delete, "Clear all") could still destroy a row between mousedown and mouseup. Click and contextmenu now use event delegation on `contentEl`, so the listener survives row rebuilds.
+
+1.0.2 sync-hardening notes:
+
+- The boolean `saving` flag was replaced with a `saveCount` refcount. The original boolean cleared on the first concurrent save's completion, opening a stale-read window for the polling reload.
+- An `unloaded` flag prevents an in-flight reload from re-creating the explorer `<style>` after `onunload`.
+- `normalizePinnedPaths` defensively handles non-array, non-string, and duplicate entries that could arrive via Obsidian Sync or hand-edited `data.json`.
 
 ## Design direction
 
@@ -79,7 +88,7 @@ Important bug and fix to remember:
 - Right-click native File Explorer file → Pin file.
 - Pinned row appears immediately.
 - One click opens pinned file immediately.
-- Right-click pinned row shows Open / Unpin.
+- Right-click pinned row shows Unpin only.
 - Rename pinned file updates path.
 - Rename parent folder updates child pinned paths.
 - Delete pinned file removes pin.

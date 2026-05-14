@@ -9,6 +9,20 @@ Possible future improvements for Simple Pinned Files. These are **not commitment
 - Consider adding a setting to choose where the Pinned Files view opens by default, or simply rely on Obsidian workspace behavior.
 - Consider improving missing-file handling, such as showing a clearer "missing file" state with an Unpin action.
 
+## Reliability and edge cases
+
+- Consider surfacing save failures via a Notice. Currently `void this.saveSettings()` in rename/delete handlers silently discards errors.
+- Consider subscribing to `file-open` in addition to `active-leaf-change` so the active-row highlight updates even when a file is opened into the currently active leaf (e.g. Quick Switcher → "open in current pane").
+- Consider light coalescing of rapid rename/delete vault events into a single `saveSettings` call.
+- Consider making the 5-second polling interval a setting, clamped to a sensible range (e.g. 2s–60s).
+- Consider pausing polling when the app is backgrounded on mobile, if Obsidian exposes a reliable signal.
+
+## Mobile UX
+
+- The current right-click context menu on pinned rows uses the desktop `contextmenu` event. On mobile, long-press may not reliably dispatch `contextmenu` on custom views. The native file-menu Pin/Unpin path still works as an alternative.
+- Consider a touch-friendly unpin affordance: a small "x" or pin-toggle button revealed on touch, or an explicit long-press handler that opens the same Obsidian `Menu`.
+- Verify tooltip behavior on touch — `setTooltip` is likely a no-op on tap. Acceptable, but worth documenting if users ask.
+
 ## Pin management
 
 - Add drag-and-drop reordering of pinned files.
@@ -35,7 +49,7 @@ Important implementation notes:
 - Only listen for drop events in our own Pinned Files view.
 - Make sure this does not break normal click/right-click behavior.
 - Carefully inspect Obsidian drag event data before implementing.
-- This should be a focused enhancement, not part of the v1.0.0 release.
+- This should be a focused enhancement, scoped tightly when it lands.
 
 ## Visual/UI ideas
 
@@ -43,7 +57,16 @@ Important implementation notes:
 - Consider making the pin icon even subtler or only visible on hover/active.
 - Consider adding optional compact/dense mode only if needed.
 - Consider adding a small count or empty-state hint, but avoid adding visual clutter.
-- Consider improving accessibility labels for pinned rows and actions.
+
+## Accessibility
+
+- Pinned rows are clickable `div`s without keyboard affordances. Consider:
+  - `role="link"` (or `role="button"`) on each row
+  - `tabindex="0"` so rows participate in keyboard tab order
+  - Enter/Space key handler that mirrors the click handler (open file; Cmd/Ctrl+Enter opens in a new tab)
+  - `aria-label={path}` so screen readers announce the full vault path
+  - `aria-current="true"` on the active pinned row
+- Verify focus rings are visible against Obsidian's native nav styling.
 
 ## Tooltip ideas
 
