@@ -9,6 +9,28 @@ Possible future improvements for Simple Pinned Files. These are **not commitment
 - Consider adding a setting to choose where the Pinned Files view opens by default, or simply rely on Obsidian workspace behavior.
 - Consider improving missing-file handling, such as showing a clearer "missing file" state with an Unpin action.
 
+## Documentation / publication readiness
+
+- Do a dedicated README polish pass before submitting to the Obsidian community plugin directory.
+- Make the README more compelling and easier to skim for first-time users.
+- Add one or more screenshots or GIFs showing:
+  - the Pinned Files sidebar view
+  - the native File Explorer pin indicators
+  - the right-click Pin file / Unpin file flow
+- Tighten the opening description and feature list so the plugin's value is immediately clear.
+- Make sure installation instructions clearly distinguish:
+  - manual install from GitHub release assets
+  - installing from Obsidian Community Plugins once accepted
+  - building from source
+- Make sure the data-safety note is prominent but not overly long.
+- Make sure Obsidian Sync behavior is explained simply.
+- Review wording for the Obsidian community plugin listing, including:
+  - plugin description
+  - README intro
+  - screenshots
+  - release notes
+- Keep the README user-facing and avoid over-explaining implementation details.
+
 ## Reliability and edge cases
 
 - Consider surfacing save failures via a Notice. Currently `void this.saveSettings()` in rename/delete handlers silently discards errors.
