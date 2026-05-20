@@ -3,7 +3,7 @@
   "name": "Simple Pinned Files",
   "version": "1.0.2",
   "minAppVersion": "1.4.16",
-  "description": "A simple, standalone pinned files view for Obsidian.",
+  "description": "Pin files for quick access in a simple sidebar view.",
   "author": "Matt Maiorana",
   "isDesktopOnly": false
 }

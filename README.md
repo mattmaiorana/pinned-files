@@ -4,6 +4,10 @@ A simple Obsidian plugin for pinning important files so they are always easy to 
 
 Simple Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to feel native to Obsidian: pinned items use the same compact styling as native file rows, pinned files open with one click, and matching files in the native File Explorer get a subtle pin indicator.
 
+## Screenshot
+
+![Simple Pinned Files sidebar view with pinned file indicators](images/simple-pinned-notes.png)
+
 ## Features
 
 - Pin files from the command palette or File Explorer context menu.
