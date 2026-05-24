@@ -2,6 +2,21 @@
 
 All notable changes to Simple Pinned Files will be documented in this file.
 
+## [1.0.6] - 2026-05-24
+
+### Added
+
+- Added an optional setting to show a small "Pinned Files" section title above the pinned list.
+
+### Changed
+
+- Refined Pinned Files view spacing for a tighter, more compact sidebar layout.
+- Updated future plans with notes on possible naming, sidebar layout limitations, and deferred workspace-sizing experiments.
+
+### Notes
+
+- No data model or vault-content behavior changes.
+
 ## [1.0.5] - 2026-05-20
 
 ### Fixed
