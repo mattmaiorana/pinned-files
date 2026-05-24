@@ -4,11 +4,13 @@ import type SimplePinnedFilesPlugin from "./main";
 export interface SimplePinnedFilesSettings {
   pinnedPaths: string[];
   openViewOnStartup: boolean;
+  showSectionTitle: boolean;
 }
 
 export const DEFAULT_SETTINGS: SimplePinnedFilesSettings = {
   pinnedPaths: [],
   openViewOnStartup: true,
+  showSectionTitle: false,
 };
 
 export class SimplePinnedFilesSettingTab extends PluginSettingTab {
@@ -34,6 +36,19 @@ export class SimplePinnedFilesSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.openViewOnStartup = value;
             await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Show section title")
+      .setDesc('Show a small "Pinned Files" label above the pinned list.')
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showSectionTitle)
+          .onChange(async (value) => {
+            this.plugin.settings.showSectionTitle = value;
+            await this.plugin.saveSettings();
+            this.plugin.refreshView();
           })
       );
 

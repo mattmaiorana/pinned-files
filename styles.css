@@ -2,6 +2,18 @@
   padding: var(--size-4-2, 8px) var(--size-4-2, 8px);
 }
 
+.simple-pinned-files-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 2px 0 6px;
+}
+
 .simple-pinned-files-list {
   display: flex;
   flex-direction: column;
