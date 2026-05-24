@@ -108,6 +108,20 @@ Important implementation notes:
 - Do not introduce Svelte/React for this small plugin.
 - Do not combine this plugin with the separate sidebar organization/styling project too early.
 
+## Naming / branding
+
+- Consider whether the plugin should eventually be renamed from "Simple Pinned Files" to "Simple Pinned Notes."
+- "Simple Pinned Notes" may sound more natural and user-friendly.
+- Do not do this casually — it would likely require coordinated renaming across:
+  - plugin name in `manifest.json`
+  - README / documentation
+  - GitHub repository name
+  - package metadata
+  - screenshots / release text
+  - Obsidian community plugin listing
+- Carefully consider whether the current "Files" wording is actually more accurate, since the plugin can pin any `TFile`, not only Markdown notes.
+- Defer unless there is a strong reason, such as user feedback or community plugin listing clarity.
+
 ## Possible separate companion project
 
 A separate sidebar organization/styling project may eventually handle:
