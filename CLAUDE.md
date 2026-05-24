@@ -47,6 +47,7 @@
 - Do not integrate bookmarks/frontmatter unless explicitly requested later.
 - Do not introduce Svelte/React.
 - Keep the plugin boring, reliable, and native-feeling.
+- The empty vertical space sometimes seen below a short pinned list when stacked above the native File Explorer is an Obsidian workspace-pane minimum-height / flex-allocation behavior, not a plugin row or view padding issue. It is intentionally **deferred** — do not "fix" it inside Simple Pinned Files by reaching into `.workspace-tabs` flex sizing. See `FUTURE_PLANS.md` → "Sidebar layout (deferred)".
 
 ## Known bug history
 
@@ -88,6 +89,7 @@ Important bugs and fixes to remember:
 - A `concurrency:` group keyed on the tag prevents racing runs for the same tag.
 - The workflow needs three permissions: `contents: write`, `attestations: write`, `id-token: write`. They are declared in the workflow file; no manual secrets configuration is required.
 - Screenshots and other images live in the repository (e.g. `images/`) and the README. They are **not** uploaded as release assets — only `manifest.json`, `main.js`, and `styles.css` are.
+- The workflow has been validated end-to-end through the 1.0.5 and 1.0.6 releases: CHANGELOG-extracted release notes, asset upload, and attestation generation all behave as expected.
 
 ### Future release steps
 
