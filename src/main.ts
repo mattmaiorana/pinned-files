@@ -197,6 +197,27 @@ export default class SimplePinnedFilesPlugin extends Plugin {
     this.updateExplorerStyles();
   }
 
+  async reorderPinnedPaths(newOrder: string[]): Promise<void> {
+    const current = this.settings.pinnedPaths;
+    if (newOrder.length !== current.length) return;
+    const currentSet = new Set(current);
+    for (const p of newOrder) {
+      if (!currentSet.has(p)) return;
+    }
+    let identical = true;
+    for (let i = 0; i < current.length; i++) {
+      if (current[i] !== newOrder[i]) {
+        identical = false;
+        break;
+      }
+    }
+    if (identical) return;
+    this.settings.pinnedPaths = newOrder;
+    await this.saveSettings();
+    this.refreshView();
+    this.updateExplorerStyles();
+  }
+
   async togglePin(file: TFile): Promise<void> {
     if (this.isPinned(file.path)) {
       await this.unpinPath(file.path);

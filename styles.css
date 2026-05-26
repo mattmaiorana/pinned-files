@@ -53,6 +53,22 @@
   font-weight: var(--nav-item-weight-active, var(--font-normal));
 }
 
+.simple-pinned-files-row[draggable="true"] {
+  cursor: var(--cursor, grab);
+}
+
+.simple-pinned-files-row.is-dragging {
+  opacity: 0.45;
+}
+
+.simple-pinned-files-row.is-drop-above {
+  box-shadow: inset 0 2px 0 0 var(--interactive-accent);
+}
+
+.simple-pinned-files-row.is-drop-below {
+  box-shadow: inset 0 -2px 0 0 var(--interactive-accent);
+}
+
 .simple-pinned-files-row.is-missing {
   opacity: 0.55;
   cursor: default;

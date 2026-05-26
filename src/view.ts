@@ -5,6 +5,9 @@ export const VIEW_TYPE_PINNED_FILES = "simple-pinned-files-view";
 
 export class PinnedFilesView extends ItemView {
   plugin: SimplePinnedFilesPlugin;
+  private draggingPath: string | null = null;
+  private dropTargetRow: HTMLElement | null = null;
+  private dropPosition: "above" | "below" | null = null;
 
   constructor(leaf: WorkspaceLeaf, plugin: SimplePinnedFilesPlugin) {
     super(leaf);
@@ -30,6 +33,18 @@ export class PinnedFilesView extends ItemView {
     );
     this.registerDomEvent(this.contentEl, "contextmenu", (evt) =>
       this.handleContentContextMenu(evt)
+    );
+    this.registerDomEvent(this.contentEl, "dragstart", (evt) =>
+      this.handleDragStart(evt)
+    );
+    this.registerDomEvent(this.contentEl, "dragover", (evt) =>
+      this.handleDragOver(evt)
+    );
+    this.registerDomEvent(this.contentEl, "drop", (evt) =>
+      this.handleDrop(evt)
+    );
+    this.registerDomEvent(this.contentEl, "dragend", () =>
+      this.handleDragEnd()
     );
     this.render();
   }
@@ -70,6 +85,7 @@ export class PinnedFilesView extends ItemView {
 
       const row = list.createDiv({ cls: "simple-pinned-files-row" });
       row.dataset.path = path;
+      row.draggable = true;
       if (path === activePath) row.addClass("is-active");
       if (!file) row.addClass("is-missing");
 
@@ -129,6 +145,84 @@ export class PinnedFilesView extends ItemView {
         })
     );
     menu.showAtMouseEvent(evt);
+  }
+
+  private handleDragStart(evt: DragEvent): void {
+    const row = this.rowFromEvent(evt);
+    if (!row) return;
+    const path = row.dataset.path;
+    if (!path) return;
+    this.draggingPath = path;
+    row.addClass("is-dragging");
+    if (evt.dataTransfer) {
+      evt.dataTransfer.setData("text/plain", path);
+      evt.dataTransfer.effectAllowed = "move";
+    }
+  }
+
+  private handleDragOver(evt: DragEvent): void {
+    if (!this.draggingPath) return;
+    const row = this.rowFromEvent(evt);
+    if (!row) return;
+    if (row.dataset.path === this.draggingPath) return;
+    evt.preventDefault();
+    if (evt.dataTransfer) evt.dataTransfer.dropEffect = "move";
+    const position = this.dropPositionForRow(evt, row);
+    if (this.dropTargetRow === row && this.dropPosition === position) return;
+    this.clearDropIndicators();
+    this.dropTargetRow = row;
+    this.dropPosition = position;
+    row.addClass(position === "above" ? "is-drop-above" : "is-drop-below");
+  }
+
+  private handleDrop(evt: DragEvent): void {
+    const sourcePath = this.draggingPath;
+    if (!sourcePath) return;
+    const row = this.rowFromEvent(evt);
+    if (!row) return;
+    const targetPath = row.dataset.path;
+    if (!targetPath || targetPath === sourcePath) return;
+    evt.preventDefault();
+    const position =
+      this.dropPosition ?? this.dropPositionForRow(evt, row);
+    const next = [...this.plugin.settings.pinnedPaths];
+    const sourceIndex = next.indexOf(sourcePath);
+    if (sourceIndex < 0) return;
+    next.splice(sourceIndex, 1);
+    let targetIndex = next.indexOf(targetPath);
+    if (targetIndex < 0) return;
+    if (position === "below") targetIndex++;
+    next.splice(targetIndex, 0, sourcePath);
+    void this.plugin.reorderPinnedPaths(next);
+  }
+
+  private handleDragEnd(): void {
+    this.clearDropIndicators();
+    const dragging = this.contentEl.querySelectorAll<HTMLElement>(
+      ".simple-pinned-files-row.is-dragging"
+    );
+    dragging.forEach((el) => el.removeClass("is-dragging"));
+    this.draggingPath = null;
+    this.dropTargetRow = null;
+    this.dropPosition = null;
+  }
+
+  private clearDropIndicators(): void {
+    const indicators = this.contentEl.querySelectorAll<HTMLElement>(
+      ".simple-pinned-files-row.is-drop-above, .simple-pinned-files-row.is-drop-below"
+    );
+    indicators.forEach((el) => {
+      el.removeClass("is-drop-above");
+      el.removeClass("is-drop-below");
+    });
+  }
+
+  private dropPositionForRow(
+    evt: DragEvent,
+    row: HTMLElement
+  ): "above" | "below" {
+    const rect = row.getBoundingClientRect();
+    return evt.clientY < rect.top + rect.height / 2 ? "above" : "below";
   }
 
   private rowText(path: string, file: TFile | null): string {

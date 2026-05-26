@@ -40,11 +40,11 @@ The initial README polish pass and the GitHub Actions release workflow are now i
 - The current right-click context menu on pinned rows uses the desktop `contextmenu` event. On mobile, long-press may not reliably dispatch `contextmenu` on custom views. The native file-menu Pin/Unpin path still works as an alternative.
 - Consider a touch-friendly unpin affordance: a small "x" or pin-toggle button revealed on touch, or an explicit long-press handler that opens the same Obsidian `Menu`.
 - Verify tooltip behavior on touch — `setTooltip` is likely a no-op on tap. Acceptable, but worth documenting if users ask.
+- **Mobile reorder.** Desktop reorder uses HTML5 `dragstart`/`drop`, which is not dispatched by touch on iOS/Android. Mobile users currently have no reorder path. A touch-based reorder would need a separate interaction pattern — for example a long-press handle, a drag-to-reorder gesture using `pointerdown`/`pointermove`/`pointerup`, or an explicit "Move up" / "Move down" entry on the existing context menu. Out of scope for the desktop drag-and-drop pass.
 
 ## Pin management
 
-- Add drag-and-drop reordering of pinned files.
-- Add keyboard-accessible reorder controls as an alternative to drag-and-drop.
+- Add keyboard-accessible reorder controls as an alternative to drag-and-drop (desktop reorder is implemented via HTML5 drag-and-drop; keyboard users have no reorder path yet).
 - Add a command to clear all pinned files, in addition to the settings button.
 - Consider adding pinned groups/sections later, but avoid overcomplicating the plugin.
 
