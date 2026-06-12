@@ -1,12 +1,12 @@
-# Simple Pinned Files
+# Pinned Files
 
 A simple Obsidian plugin for pinning important files so they are always easy to find.
 
-Simple Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to feel native to Obsidian: pinned items use the same compact styling as native file rows, pinned files open with one click, and matching files in the native File Explorer get a subtle pin indicator.
+Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to feel native to Obsidian: pinned items use the same compact styling as native file rows, pinned files open with one click, and matching files in the native File Explorer get a subtle pin indicator.
 
 ## Screenshot
 
-![Simple Pinned Files sidebar view with pinned file indicators](images/simple-pinned-notes.png)
+![Pinned Files sidebar view with pinned file indicators](images/simple-pinned-notes.png)
 
 ## Features
 
@@ -33,21 +33,21 @@ Simple Pinned Files adds a compact Pinned Files view to the sidebar. It is desig
 ### Manual installation from a GitHub release
 
 1. Download `manifest.json`, `main.js`, and `styles.css` from the latest release on the [GitHub Releases page](https://github.com/mattmaiorana/simple-pinned-files/releases).
-2. Inside your vault, create the folder `.obsidian/plugins/simple-pinned-files/`.
+2. Inside your vault, create the folder `.obsidian/plugins/pinned-files/`.
 3. Copy the three files into that folder.
-4. Reload Obsidian and enable **Simple Pinned Files** in **Settings → Community plugins**.
+4. Reload Obsidian and enable **Pinned Files** in **Settings → Community plugins**.
 
 ### From source
 
 1. Clone this repository.
 2. `npm install`
 3. `npm run build`
-4. Copy `manifest.json`, `main.js`, and `styles.css` into the `.obsidian/plugins/simple-pinned-files/` folder inside your vault.
+4. Copy `manifest.json`, `main.js`, and `styles.css` into the `.obsidian/plugins/pinned-files/` folder inside your vault.
 5. Enable the plugin in **Settings → Community plugins**.
 
 ## Usage
 
-- Open the Pinned Files view from the command palette (**Open Simple Pinned Files**) or the ribbon pin icon.
+- Open the Pinned Files view from the command palette (**Open Pinned Files**) or the ribbon pin icon.
 - Right-click a file in the native File Explorer → **Pin file** / **Unpin file**.
 - Click a pinned row to open the file. Cmd/Ctrl-click to open it in a new tab.
 - Right-click a pinned row in the Pinned Files view → **Unpin**.
@@ -69,7 +69,7 @@ Pinned files are stored in the plugin's own `data.json`. If Obsidian Sync is con
 This plugin is intentionally conservative about what it touches.
 
 - It does not create, delete, rename, move, or modify any notes, attachments, folders, frontmatter, or bookmarks.
-- The only file it ever writes is its own settings file at `.obsidian/plugins/simple-pinned-files/data.json` inside your vault.
+- The only file it ever writes is its own settings file at `.obsidian/plugins/pinned-files/data.json` inside your vault.
 - Rename and delete handlers only update stored pin paths after Obsidian reports that a file or folder has changed. They never originate a vault change.
 - Native File Explorer pin indicators are decoration only and do not interfere with native click, right-click, or drag behavior.
 

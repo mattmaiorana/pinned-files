@@ -1,22 +1,22 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import type SimplePinnedFilesPlugin from "./main";
+import type PinnedFilesPlugin from "./main";
 
-export interface SimplePinnedFilesSettings {
+export interface PinnedFilesSettings {
   pinnedPaths: string[];
   openViewOnStartup: boolean;
   showSectionTitle: boolean;
 }
 
-export const DEFAULT_SETTINGS: SimplePinnedFilesSettings = {
+export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   pinnedPaths: [],
   openViewOnStartup: true,
   showSectionTitle: true,
 };
 
-export class SimplePinnedFilesSettingTab extends PluginSettingTab {
-  plugin: SimplePinnedFilesPlugin;
+export class PinnedFilesSettingTab extends PluginSettingTab {
+  plugin: PinnedFilesPlugin;
 
-  constructor(app: App, plugin: SimplePinnedFilesPlugin) {
+  constructor(app: App, plugin: PinnedFilesPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }

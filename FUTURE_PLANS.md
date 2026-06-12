@@ -1,6 +1,6 @@
 # Future Plans
 
-Possible future improvements for Simple Pinned Files. These are **not commitments for any specific version** — just notable ideas to consider later.
+Possible future improvements for Pinned Files. These are **not commitments for any specific version** — just notable ideas to consider later.
 
 ## Near-term polish
 
@@ -104,7 +104,7 @@ Important implementation notes:
 - The extra empty space below a short pinned list when Pinned Files is stacked above the native File Explorer is likely caused by Obsidian's workspace pane minimum sizing / flex-allocation logic, not by plugin row or view padding. Manual resizing may not fully solve it because Obsidian appears to enforce a minimum height on stacked sidebar ItemViews.
 - A CSS override could try to reduce that minimum height or force the parent pane to shrink toward content height — for example a scoped `:has()` selector on the parent `.workspace-tabs` containing our `data-type` leaf with `flex-grow: 0 !important` and a relaxed `min-height`. This crosses into Obsidian's workspace layout behavior, not just styling our own view.
 - Risks: such a rule may interfere with manual resizing (the workspace resize handle could effectively become a no-op while Pinned Files is the active view in that pane) and is fragile to Obsidian DOM changes around `.workspace-tabs` / `.workspace-leaf-content`.
-- This probably belongs in the separate sidebar organization/styling companion project rather than in Simple Pinned Files. Simple Pinned Files should remain conservative by default and not reach into workspace layout from its own stylesheet.
+- This probably belongs in the separate sidebar organization/styling companion project rather than in Pinned Files. Pinned Files should remain conservative by default and not reach into workspace layout from its own stylesheet.
 
 ## Things to avoid unless intentionally revisiting architecture
 
@@ -115,20 +115,6 @@ Important implementation notes:
 - Do not introduce Svelte/React for this small plugin.
 - Do not combine this plugin with the separate sidebar organization/styling project too early.
 
-## Naming / branding
-
-- Consider whether the plugin should eventually be renamed from "Simple Pinned Files" to "Simple Pinned Notes."
-- "Simple Pinned Notes" may sound more natural and user-friendly.
-- Do not do this casually — it would likely require coordinated renaming across:
-  - plugin name in `manifest.json`
-  - README / documentation
-  - GitHub repository name
-  - package metadata
-  - screenshots / release text
-  - Obsidian community plugin listing
-- Carefully consider whether the current "Files" wording is actually more accurate, since the plugin can pin any `TFile`, not only Markdown notes.
-- Defer unless there is a strong reason, such as user feedback or community plugin listing clarity.
-
 ## Possible separate companion project
 
 A separate sidebar organization/styling project may eventually handle:
@@ -138,4 +124,4 @@ A separate sidebar organization/styling project may eventually handle:
 - Hiding or simplifying File Explorer toolbar buttons.
 - Making the left sidebar feel calmer and more unified.
 
-Keep that work separate from Simple Pinned Files unless there is a strong reason to merge later.
+Keep that work separate from Pinned Files unless there is a strong reason to merge later.

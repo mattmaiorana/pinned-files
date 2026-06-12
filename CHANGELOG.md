@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Simple Pinned Files will be documented in this file.
+All notable changes to Pinned Files will be documented in this file.
 
 ## [1.0.7] - 2026-05-25
 

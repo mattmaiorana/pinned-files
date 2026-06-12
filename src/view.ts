@@ -1,16 +1,16 @@
 import { ItemView, Menu, setIcon, setTooltip, TFile, WorkspaceLeaf } from "obsidian";
-import type SimplePinnedFilesPlugin from "./main";
+import type PinnedFilesPlugin from "./main";
 
-export const VIEW_TYPE_PINNED_FILES = "simple-pinned-files-view";
+export const VIEW_TYPE_PINNED_FILES = "pinned-files-view";
 
 export class PinnedFilesView extends ItemView {
-  plugin: SimplePinnedFilesPlugin;
+  plugin: PinnedFilesPlugin;
   private draggingPath: string | null = null;
   private dropTargetRow: HTMLElement | null = null;
   private dropPosition: "above" | "below" | null = null;
   private dragImageEl: HTMLElement | null = null;
 
-  constructor(leaf: WorkspaceLeaf, plugin: SimplePinnedFilesPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: PinnedFilesPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -58,21 +58,21 @@ export class PinnedFilesView extends ItemView {
   render(): void {
     const container = this.contentEl;
     container.empty();
-    container.addClass("simple-pinned-files-view");
+    container.addClass("pinned-files-view");
 
     if (this.plugin.settings.showSectionTitle) {
       container.createDiv({
-        cls: "simple-pinned-files-section-title",
+        cls: "pinned-files-section-title",
         text: "PINNED FILES",
       });
     }
 
-    const list = container.createDiv({ cls: "simple-pinned-files-list" });
+    const list = container.createDiv({ cls: "pinned-files-list" });
 
     const paths = this.plugin.settings.pinnedPaths;
     if (paths.length === 0) {
       list.createDiv({
-        cls: "simple-pinned-files-empty",
+        cls: "pinned-files-empty",
         text: "No pinned files yet. Right-click a file and choose “Pin file”, or use the “Pin/unpin current file” command.",
       });
       return;
@@ -84,18 +84,18 @@ export class PinnedFilesView extends ItemView {
       const abstract = this.app.vault.getAbstractFileByPath(path);
       const file = abstract instanceof TFile ? abstract : null;
 
-      const row = list.createDiv({ cls: "simple-pinned-files-row" });
+      const row = list.createDiv({ cls: "pinned-files-row" });
       row.dataset.path = path;
       row.draggable = true;
       if (path === activePath) row.addClass("is-active");
       if (!file) row.addClass("is-missing");
 
       row.createDiv({
-        cls: "simple-pinned-files-title",
+        cls: "pinned-files-title",
         text: this.rowText(path, file),
       });
 
-      const iconEl = row.createDiv({ cls: "simple-pinned-files-pin-icon" });
+      const iconEl = row.createDiv({ cls: "pinned-files-pin-icon" });
       setIcon(iconEl, "pin");
 
       setTooltip(row, path, { delay: 1000, placement: "top" });
@@ -105,7 +105,7 @@ export class PinnedFilesView extends ItemView {
   updateActiveStates(): void {
     const activePath = this.app.workspace.getActiveFile()?.path;
     const rows = this.contentEl.querySelectorAll<HTMLElement>(
-      ".simple-pinned-files-row"
+      ".pinned-files-row"
     );
     rows.forEach((row) => {
       if (row.dataset.path === activePath) row.addClass("is-active");
@@ -116,7 +116,7 @@ export class PinnedFilesView extends ItemView {
   private rowFromEvent(evt: MouseEvent): HTMLElement | null {
     const target = evt.target as HTMLElement | null;
     if (!target) return null;
-    const row = target.closest<HTMLElement>(".simple-pinned-files-row");
+    const row = target.closest<HTMLElement>(".pinned-files-row");
     if (!row || !this.contentEl.contains(row)) return null;
     return row;
   }
@@ -168,7 +168,7 @@ export class PinnedFilesView extends ItemView {
   private applyCustomDragImage(evt: DragEvent, row: HTMLElement): void {
     if (!evt.dataTransfer) return;
     const titleEl = row.querySelector<HTMLElement>(
-      ".simple-pinned-files-title"
+      ".pinned-files-title"
     );
     const text = titleEl?.textContent ?? row.dataset.path ?? "";
     if (!text) return;
@@ -266,7 +266,7 @@ export class PinnedFilesView extends ItemView {
   private handleDragEnd(): void {
     this.clearDropIndicators();
     const dragging = this.contentEl.querySelectorAll<HTMLElement>(
-      ".simple-pinned-files-row.is-dragging, .simple-pinned-files-row.is-dragging-source"
+      ".pinned-files-row.is-dragging, .pinned-files-row.is-dragging-source"
     );
     dragging.forEach((el) => {
       el.removeClass("is-dragging");
@@ -283,7 +283,7 @@ export class PinnedFilesView extends ItemView {
 
   private clearDropIndicators(): void {
     const indicators = this.contentEl.querySelectorAll<HTMLElement>(
-      ".simple-pinned-files-row.is-drop-above, .simple-pinned-files-row.is-drop-below"
+      ".pinned-files-row.is-drop-above, .pinned-files-row.is-drop-below"
     );
     indicators.forEach((el) => {
       el.removeClass("is-drop-above");

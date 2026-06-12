@@ -1,8 +1,8 @@
-# Simple Pinned Files — Claude Notes
+# Pinned Files — Claude Notes
 
 ## Project status
 
-- v1.0.7 — stable. v1.0.0 was the initial stable release; v1.0.1 added sync-aware live reload; v1.0.2 hardened the sync/reload path, switched pinned-row events to delegation, and added defensive pinned-path normalization; v1.0.3 was a publication-readiness patch (plugin description compliance, README screenshot, package metadata alignment); v1.0.4 cleared the remaining Obsidian plugin checker warnings (replaced `builtin-modules` with Node's `node:module`, removed placeholder-like README content); v1.0.5 tightened the polling reload's `saveCount` re-check after `await loadData()` and added the `.github/workflows/release.yml` workflow that creates attested releases from semver tags; v1.0.6 added the optional `showSectionTitle` setting and refined view spacing; v1.0.7 added desktop drag-and-drop reordering (with a permutation-validated `reorderPinnedPaths` method, a straight-line drop indicator, a text-only drag preview, and indicator-fallback drop resolution), refined section title and view spacing, and flipped `showSectionTitle`'s default to `true` for fresh installs while preserving existing saved values. Settings shape is `pinnedPaths`, `openViewOnStartup`, `showSectionTitle`. `showSectionTitle` defaults to `true` for fresh installs; existing saved values in `data.json` are preserved through the `{ ...DEFAULT_SETTINGS, ...(data ?? {}) }` merge in `loadSettings`. Drag-and-drop reordering uses HTML5 drag events and is desktop-only; mobile/touch reorder is deferred.
+- v1.0.7 — stable. Plugin was renamed from "Simple Pinned Files" to "Pinned Files" (plugin id changed from `simple-pinned-files` to `pinned-files`). v1.0.0 was the initial stable release; v1.0.1 added sync-aware live reload; v1.0.2 hardened the sync/reload path, switched pinned-row events to delegation, and added defensive pinned-path normalization; v1.0.3 was a publication-readiness patch (plugin description compliance, README screenshot, package metadata alignment); v1.0.4 cleared the remaining Obsidian plugin checker warnings (replaced `builtin-modules` with Node's `node:module`, removed placeholder-like README content); v1.0.5 tightened the polling reload's `saveCount` re-check after `await loadData()` and added the `.github/workflows/release.yml` workflow that creates attested releases from semver tags; v1.0.6 added the optional `showSectionTitle` setting and refined view spacing; v1.0.7 added desktop drag-and-drop reordering (with a permutation-validated `reorderPinnedPaths` method, a straight-line drop indicator, a text-only drag preview, and indicator-fallback drop resolution), refined section title and view spacing, and flipped `showSectionTitle`'s default to `true` for fresh installs while preserving existing saved values. Settings shape is `pinnedPaths`, `openViewOnStartup`, `showSectionTitle`. `showSectionTitle` defaults to `true` for fresh installs; existing saved values in `data.json` are preserved through the `{ ...DEFAULT_SETTINGS, ...(data ?? {}) }` merge in `loadSettings`. Drag-and-drop reordering uses HTML5 drag events and is desktop-only; mobile/touch reorder is deferred.
 - The plugin is intentionally small and focused.
 - Core behavior is working:
   - pinned files view
@@ -17,8 +17,8 @@
 
 ## Core architecture
 
-- Plugin id: `simple-pinned-files`
-- View type: `simple-pinned-files-view`
+- Plugin id: `pinned-files`
+- View type: `pinned-files-view`
 - Source of truth: plugin settings / `pinnedPaths`
 - The plugin registers a standalone `ItemView` called Pinned Files.
 - The plugin does not render a custom file tree.
@@ -28,7 +28,7 @@
 
 ## Sync / external-change live reload
 
-- Plugin data lives at `.obsidian/plugins/simple-pinned-files/data.json`. This is outside the vault file tree, so `vault.on("modify")` does not reliably fire for it on either desktop or mobile.
+- Plugin data lives at `.obsidian/plugins/pinned-files/data.json`. This is outside the vault file tree, so `vault.on("modify")` does not reliably fire for it on either desktop or mobile.
 - The plugin polls `loadData()` every 5 seconds via `registerInterval(window.setInterval(...))` and calls `reloadSettingsFromDiskIfChanged()`.
 - The poll compares the disk `pinnedPaths` against in-memory `pinnedPaths` (length + order-sensitive equality). If different, it replaces in-memory settings and calls `refreshView()` + `updateExplorerStyles()`.
 - **Critical invariant: the reload path must never call `saveData()`.** Local pin/unpin is the only operation that writes `data.json`. The reload path is strictly read-only to avoid sync-write loops with Obsidian Sync.
@@ -48,7 +48,7 @@
 - Do not integrate bookmarks/frontmatter unless explicitly requested later.
 - Do not introduce Svelte/React.
 - Keep the plugin boring, reliable, and native-feeling.
-- The empty vertical space sometimes seen below a short pinned list when stacked above the native File Explorer is an Obsidian workspace-pane minimum-height / flex-allocation behavior, not a plugin row or view padding issue. It is intentionally **deferred** — do not "fix" it inside Simple Pinned Files by reaching into `.workspace-tabs` flex sizing. See `FUTURE_PLANS.md` → "Sidebar layout (deferred)".
+- The empty vertical space sometimes seen below a short pinned list when stacked above the native File Explorer is an Obsidian workspace-pane minimum-height / flex-allocation behavior, not a plugin row or view padding issue. It is intentionally **deferred** — do not "fix" it inside Pinned Files by reaching into `.workspace-tabs` flex sizing. See `FUTURE_PLANS.md` → "Sidebar layout (deferred)".
 
 ## Known bug history
 

@@ -7,8 +7,8 @@ import {
 } from "obsidian";
 import {
   DEFAULT_SETTINGS,
-  SimplePinnedFilesSettings,
-  SimplePinnedFilesSettingTab,
+  PinnedFilesSettings,
+  PinnedFilesSettingTab,
 } from "./settings";
 import { PinnedFilesView, VIEW_TYPE_PINNED_FILES } from "./view";
 import { removeExplorerStyles, updateExplorerStyles } from "./explorer-style";
@@ -34,8 +34,8 @@ function normalizePinnedPaths(value: unknown): string[] {
   return result;
 }
 
-export default class SimplePinnedFilesPlugin extends Plugin {
-  settings: SimplePinnedFilesSettings = { ...DEFAULT_SETTINGS };
+export default class PinnedFilesPlugin extends Plugin {
+  settings: PinnedFilesSettings = { ...DEFAULT_SETTINGS };
   viewInstances: Set<PinnedFilesView> = new Set();
   private saveCount = 0;
   private reloading = false;
@@ -49,13 +49,13 @@ export default class SimplePinnedFilesPlugin extends Plugin {
       (leaf) => new PinnedFilesView(leaf, this)
     );
 
-    this.addRibbonIcon("pin", "Open Simple Pinned Files", () => {
+    this.addRibbonIcon("pin", "Open Pinned Files", () => {
       void this.activateView();
     });
 
     this.addCommand({
       id: "open-pinned-files-view",
-      name: "Open Simple Pinned Files",
+      name: "Open Pinned Files",
       callback: () => {
         void this.activateView();
       },
@@ -105,7 +105,7 @@ export default class SimplePinnedFilesPlugin extends Plugin {
       })
     );
 
-    this.addSettingTab(new SimplePinnedFilesSettingTab(this.app, this));
+    this.addSettingTab(new PinnedFilesSettingTab(this.app, this));
 
     this.registerInterval(
       window.setInterval(
@@ -129,9 +129,9 @@ export default class SimplePinnedFilesPlugin extends Plugin {
 
   async loadSettings(): Promise<void> {
     const data = (await this.loadData()) as
-      | Partial<SimplePinnedFilesSettings>
+      | Partial<PinnedFilesSettings>
       | null;
-    const merged: SimplePinnedFilesSettings = {
+    const merged: PinnedFilesSettings = {
       ...DEFAULT_SETTINGS,
       ...(data ?? {}),
     };
@@ -153,10 +153,10 @@ export default class SimplePinnedFilesPlugin extends Plugin {
     this.reloading = true;
     try {
       const raw = (await this.loadData()) as
-        | Partial<SimplePinnedFilesSettings>
+        | Partial<PinnedFilesSettings>
         | null;
       if (this.unloaded || this.saveCount > 0) return;
-      const next: SimplePinnedFilesSettings = {
+      const next: PinnedFilesSettings = {
         ...DEFAULT_SETTINGS,
         ...(raw ?? {}),
       };
