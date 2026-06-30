@@ -26,9 +26,9 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Add Pinned Files to sidebar on startup")
+      .setName("Add pinned files to sidebar on startup")
       .setDesc(
-        "Ensure the Pinned Files view is available in the left sidebar when Obsidian starts. The view will not steal focus from your active sidebar tab."
+        "Ensure the pinned files view is available in the left sidebar when Obsidian starts. The view will not steal focus from your active sidebar tab."
       )
       .addToggle((toggle) =>
         toggle
@@ -41,7 +41,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Show section title")
-      .setDesc('Show a small "Pinned Files" label above the pinned list.')
+      .setDesc('Show a small "pinned files" label above the pinned list.')
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.showSectionTitle)
@@ -60,7 +60,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
       .addButton((button) =>
         button
           .setButtonText("Clear all")
-          .setWarning()
+          .setDestructive()
           .onClick(async () => {
             this.plugin.settings.pinnedPaths = [];
             await this.plugin.saveSettings();

@@ -2,6 +2,26 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.0.9] - 2026-06-30
+
+### Changed
+
+- Completed the rename to "Pinned Files": the plugin `id` is now `pinned-files` (and the vault install folder is `.obsidian/plugins/pinned-files/`). The plugin is published as a community plugin under the new `pinned-files` id.
+- Native File Explorer pin indicators are now styled entirely from `styles.css` (a toggled `is-pinned-file` class) instead of an injected `<style>` element, per Obsidian plugin guidelines.
+- In-app UI text (view title, ribbon tooltip, settings labels, command name) now uses sentence case. The store/display name remains "Pinned Files".
+- The "Clear all" button uses `setDestructive()` instead of the deprecated `setWarning()`.
+- Raised `minAppVersion` to `1.13.0` (required by `setDestructive`, also covers the awaited async `revealLeaf`).
+
+### Fixed
+
+- Awaited `workspace.revealLeaf()` calls (no longer floating promises) and gated them behind the raised `minAppVersion`.
+- Use `activeDocument` instead of `document` for popout-window compatibility.
+- The "Open view" command id/name no longer repeat the plugin id/name.
+
+### Notes
+
+- No data model or vault-content behavior changes.
+
 ## [1.0.8] - 2026-06-30
 
 ### Fixed

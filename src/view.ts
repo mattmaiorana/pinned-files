@@ -20,7 +20,7 @@ export class PinnedFilesView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Pinned Files";
+    return "Pinned files";
   }
 
   getIcon(): string {
@@ -172,7 +172,7 @@ export class PinnedFilesView extends ItemView {
     );
     const text = titleEl?.textContent ?? row.dataset.path ?? "";
     if (!text) return;
-    const dragImage = document.createElement("div");
+    const dragImage = activeDocument.createElement("div");
     dragImage.textContent = text;
     const s = dragImage.style;
     s.position = "fixed";
@@ -186,7 +186,7 @@ export class PinnedFilesView extends ItemView {
     s.fontWeight = "var(--nav-item-weight, inherit)";
     s.lineHeight = "var(--line-height-tight, 1.3)";
     s.color = "var(--text-normal)";
-    document.body.appendChild(dragImage);
+    activeDocument.body.appendChild(dragImage);
     this.dragImageEl = dragImage;
     evt.dataTransfer.setDragImage(dragImage, 0, 0);
     window.setTimeout(() => {

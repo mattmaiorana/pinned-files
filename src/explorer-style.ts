@@ -1,63 +1,25 @@
-const STYLE_ID = "pinned-files-explorer-style";
+const PINNED_CLASS = "is-pinned-file";
 
-const PIN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>`;
+// Pin indicators in the native File Explorer are styled entirely from
+// `styles.css` (`.nav-file-title.is-pinned-file`). This module only toggles the
+// `is-pinned-file` class on the matching explorer rows — it never injects a
+// <style> element or generates CSS at runtime.
 
-const PIN_SVG_URI = `data:image/svg+xml;utf8,${encodeURIComponent(PIN_SVG)}`;
-
-function escapeAttr(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+export function applyExplorerPinIndicators(paths: string[]): void {
+  const pinned = new Set(paths);
+  const nodes = activeDocument.querySelectorAll<HTMLElement>(
+    ".nav-file-title[data-path]"
+  );
+  nodes.forEach((node) => {
+    const path = node.getAttribute("data-path");
+    const shouldPin = path !== null && pinned.has(path);
+    node.classList.toggle(PINNED_CLASS, shouldPin);
+  });
 }
 
-export function updateExplorerStyles(paths: string[]): void {
-  let el = document.getElementById(STYLE_ID) as HTMLStyleElement | null;
-  if (!el) {
-    el = document.createElement("style");
-    el.id = STYLE_ID;
-    document.head.appendChild(el);
-  }
-
-  if (paths.length === 0) {
-    el.textContent = "";
-    return;
-  }
-
-  const baseSelectors = paths
-    .map((p) => `.nav-file-title[data-path="${escapeAttr(p)}"]`)
-    .join(",\n");
-
-  const afterSelectors = paths
-    .map((p) => `.nav-file-title[data-path="${escapeAttr(p)}"]::after`)
-    .join(",\n");
-
-  el.textContent = `
-${baseSelectors} {
-  position: relative;
-  padding-right: 24px;
-}
-${afterSelectors} {
-  content: "";
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  width: 14px;
-  height: 14px;
-  transform: translateY(-50%);
-  background-color: var(--text-faint);
-  opacity: 0.55;
-  pointer-events: none;
-  -webkit-mask-image: url("${PIN_SVG_URI}");
-  mask-image: url("${PIN_SVG_URI}");
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-`;
-}
-
-export function removeExplorerStyles(): void {
-  const el = document.getElementById(STYLE_ID);
-  if (el) el.remove();
+export function removeExplorerPinIndicators(): void {
+  const nodes = activeDocument.querySelectorAll<HTMLElement>(
+    `.nav-file-title.${PINNED_CLASS}`
+  );
+  nodes.forEach((node) => node.classList.remove(PINNED_CLASS));
 }

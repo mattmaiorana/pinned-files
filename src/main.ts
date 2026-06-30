@@ -11,7 +11,10 @@ import {
   PinnedFilesSettingTab,
 } from "./settings";
 import { PinnedFilesView, VIEW_TYPE_PINNED_FILES } from "./view";
-import { removeExplorerStyles, updateExplorerStyles } from "./explorer-style";
+import {
+  applyExplorerPinIndicators,
+  removeExplorerPinIndicators,
+} from "./explorer-style";
 
 const SETTINGS_RELOAD_INTERVAL_MS = 5000;
 
@@ -40,6 +43,9 @@ export default class PinnedFilesPlugin extends Plugin {
   private saveCount = 0;
   private reloading = false;
   private unloaded = false;
+  private explorerObserver: MutationObserver | null = null;
+  private observedExplorerContainer: HTMLElement | null = null;
+  private explorerRefreshQueued = false;
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -49,13 +55,13 @@ export default class PinnedFilesPlugin extends Plugin {
       (leaf) => new PinnedFilesView(leaf, this)
     );
 
-    this.addRibbonIcon("pin", "Open Pinned Files", () => {
+    this.addRibbonIcon("pin", "Open pinned files", () => {
       void this.activateView();
     });
 
     this.addCommand({
-      id: "open-pinned-files-view",
-      name: "Open Pinned Files",
+      id: "open-view",
+      name: "Open view",
       callback: () => {
         void this.activateView();
       },
@@ -114,7 +120,14 @@ export default class PinnedFilesPlugin extends Plugin {
       )
     );
 
+    this.registerEvent(
+      this.app.workspace.on("layout-change", () => {
+        this.syncExplorerObserver();
+      })
+    );
+
     this.app.workspace.onLayoutReady(() => {
+      this.syncExplorerObserver();
       this.updateExplorerStyles();
       if (this.settings.openViewOnStartup) {
         void this.ensurePinnedView();
@@ -124,7 +137,12 @@ export default class PinnedFilesPlugin extends Plugin {
 
   onunload(): void {
     this.unloaded = true;
-    removeExplorerStyles();
+    if (this.explorerObserver) {
+      this.explorerObserver.disconnect();
+      this.explorerObserver = null;
+    }
+    this.observedExplorerContainer = null;
+    removeExplorerPinIndicators();
   }
 
   async loadSettings(): Promise<void> {
@@ -248,20 +266,55 @@ export default class PinnedFilesPlugin extends Plugin {
   }
 
   updateExplorerStyles(): void {
-    updateExplorerStyles(this.settings.pinnedPaths);
+    applyExplorerPinIndicators(this.settings.pinnedPaths);
+  }
+
+  private syncExplorerObserver(): void {
+    if (this.unloaded) return;
+    const container = activeDocument.querySelector<HTMLElement>(
+      ".nav-files-container"
+    );
+    if (container === this.observedExplorerContainer) return;
+    if (this.explorerObserver) {
+      this.explorerObserver.disconnect();
+      this.explorerObserver = null;
+    }
+    this.observedExplorerContainer = container;
+    if (!container) return;
+    // Watch only childList/subtree: the File Explorer recreates rows on
+    // collapse/expand and lazy render, which drops our class. Toggling the
+    // class is an attribute change (not observed), so this cannot self-trigger.
+    this.explorerObserver = new MutationObserver(() => {
+      this.queueExplorerRefresh();
+    });
+    this.explorerObserver.observe(container, {
+      childList: true,
+      subtree: true,
+    });
+    this.updateExplorerStyles();
+  }
+
+  private queueExplorerRefresh(): void {
+    if (this.explorerRefreshQueued || this.unloaded) return;
+    this.explorerRefreshQueued = true;
+    window.requestAnimationFrame(() => {
+      this.explorerRefreshQueued = false;
+      if (this.unloaded) return;
+      this.updateExplorerStyles();
+    });
   }
 
   private async activateView(): Promise<void> {
     const { workspace } = this.app;
     const existing = workspace.getLeavesOfType(VIEW_TYPE_PINNED_FILES);
     if (existing.length > 0) {
-      workspace.revealLeaf(existing[0]);
+      await workspace.revealLeaf(existing[0]);
       return;
     }
     const leaf = workspace.getLeftLeaf(false);
     if (!leaf) return;
     await leaf.setViewState({ type: VIEW_TYPE_PINNED_FILES, active: true });
-    workspace.revealLeaf(leaf);
+    await workspace.revealLeaf(leaf);
   }
 
   private async ensurePinnedView(): Promise<void> {
