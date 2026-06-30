@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.0] - 2026-06-30
+
+### Changed
+
+- Restored the manifest display name to "Pinned Files" (plugin `id`: `pinned-files`).
+
 ## [1.0.10] - 2026-06-30
 
 ### Changed
