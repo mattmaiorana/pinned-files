@@ -2,7 +2,7 @@
 
 ## Project status
 
-- v1.0.7 — stable. Plugin was renamed from "Simple Pinned Files" to "Pinned Files" (plugin id changed from `simple-pinned-files` to `pinned-files`). v1.0.0 was the initial stable release; v1.0.1 added sync-aware live reload; v1.0.2 hardened the sync/reload path, switched pinned-row events to delegation, and added defensive pinned-path normalization; v1.0.3 was a publication-readiness patch (plugin description compliance, README screenshot, package metadata alignment); v1.0.4 cleared the remaining Obsidian plugin checker warnings (replaced `builtin-modules` with Node's `node:module`, removed placeholder-like README content); v1.0.5 tightened the polling reload's `saveCount` re-check after `await loadData()` and added the `.github/workflows/release.yml` workflow that creates attested releases from semver tags; v1.0.6 added the optional `showSectionTitle` setting and refined view spacing; v1.0.7 added desktop drag-and-drop reordering (with a permutation-validated `reorderPinnedPaths` method, a straight-line drop indicator, a text-only drag preview, and indicator-fallback drop resolution), refined section title and view spacing, and flipped `showSectionTitle`'s default to `true` for fresh installs while preserving existing saved values. Settings shape is `pinnedPaths`, `openViewOnStartup`, `showSectionTitle`. `showSectionTitle` defaults to `true` for fresh installs; existing saved values in `data.json` are preserved through the `{ ...DEFAULT_SETTINGS, ...(data ?? {}) }` merge in `loadSettings`. Drag-and-drop reordering uses HTML5 drag events and is desktop-only; mobile/touch reorder is deferred.
+- v1.0.8 — stable. v1.0.8 restored the manifest `id` to `simple-pinned-files` after an earlier rename had changed it to `pinned-files`, which produced an install-blocking "Plugin ID mismatch" error in the community store. Plugin's **display name** was renamed from "Simple Pinned Files" to "Pinned Files". The **plugin id stays `simple-pinned-files`** and must never change: Obsidian treats the manifest `id` as a permanent identifier that has to match the community-store registration in `obsidianmd/obsidian-releases` (registered as `simple-pinned-files`) and the vault install-folder name (`.obsidian/plugins/simple-pinned-files/`). An earlier attempt to also change the id to `pinned-files` caused a "Plugin ID mismatch" error in the community store and was reverted. Internal identifiers (VIEW_TYPE `pinned-files-view`, CSS classes, TS symbols) are arbitrary and were renamed freely. v1.0.0 was the initial stable release; v1.0.1 added sync-aware live reload; v1.0.2 hardened the sync/reload path, switched pinned-row events to delegation, and added defensive pinned-path normalization; v1.0.3 was a publication-readiness patch (plugin description compliance, README screenshot, package metadata alignment); v1.0.4 cleared the remaining Obsidian plugin checker warnings (replaced `builtin-modules` with Node's `node:module`, removed placeholder-like README content); v1.0.5 tightened the polling reload's `saveCount` re-check after `await loadData()` and added the `.github/workflows/release.yml` workflow that creates attested releases from semver tags; v1.0.6 added the optional `showSectionTitle` setting and refined view spacing; v1.0.7 added desktop drag-and-drop reordering (with a permutation-validated `reorderPinnedPaths` method, a straight-line drop indicator, a text-only drag preview, and indicator-fallback drop resolution), refined section title and view spacing, and flipped `showSectionTitle`'s default to `true` for fresh installs while preserving existing saved values. Settings shape is `pinnedPaths`, `openViewOnStartup`, `showSectionTitle`. `showSectionTitle` defaults to `true` for fresh installs; existing saved values in `data.json` are preserved through the `{ ...DEFAULT_SETTINGS, ...(data ?? {}) }` merge in `loadSettings`. Drag-and-drop reordering uses HTML5 drag events and is desktop-only; mobile/touch reorder is deferred.
 - The plugin is intentionally small and focused.
 - Core behavior is working:
   - pinned files view
@@ -17,7 +17,7 @@
 
 ## Core architecture
 
-- Plugin id: `pinned-files`
+- Plugin id: `simple-pinned-files` (immutable — this is the permanent community-store identifier and must never change; only the display `name` was changed to "Pinned Files")
 - View type: `pinned-files-view`
 - Source of truth: plugin settings / `pinnedPaths`
 - The plugin registers a standalone `ItemView` called Pinned Files.
@@ -28,7 +28,7 @@
 
 ## Sync / external-change live reload
 
-- Plugin data lives at `.obsidian/plugins/pinned-files/data.json`. This is outside the vault file tree, so `vault.on("modify")` does not reliably fire for it on either desktop or mobile.
+- Plugin data lives at `.obsidian/plugins/simple-pinned-files/data.json`. This is outside the vault file tree, so `vault.on("modify")` does not reliably fire for it on either desktop or mobile.
 - The plugin polls `loadData()` every 5 seconds via `registerInterval(window.setInterval(...))` and calls `reloadSettingsFromDiskIfChanged()`.
 - The poll compares the disk `pinnedPaths` against in-memory `pinnedPaths` (length + order-sensitive equality). If different, it replaces in-memory settings and calls `refreshView()` + `updateExplorerStyles()`.
 - **Critical invariant: the reload path must never call `saveData()`.** Local pin/unpin is the only operation that writes `data.json`. The reload path is strictly read-only to avoid sync-write loops with Obsidian Sync.
@@ -84,7 +84,7 @@ Important bugs and fixes to remember:
 
 ## Release process
 
-- Public repository: `mattmaiorana/simple-pinned-files`.
+- Public repository: `mattmaiorana/pinned-files`.
 - Release tags must exactly match the `version` field in `manifest.json` and must **not** use a `v` prefix. Example: tag `1.0.5`, not `v1.0.5`.
 - `.github/workflows/release.yml` triggers on semver tag pushes (`[0-9]+.[0-9]+.[0-9]+`) and on manual `workflow_dispatch` with a required `tag` input. It checks out the **tagged commit**, runs `npm ci`, `npx tsc --noEmit`, and `npm run build`, verifies that `manifest.json` / `main.js` / `styles.css` exist, verifies the resolved tag matches `manifest.json` version, extracts the matching `## [<tag>] - YYYY-MM-DD` section from `CHANGELOG.md` as the release body, generates GitHub artifact attestations via `actions/attest-build-provenance` for all three files, and then **creates or updates** the GitHub Release — clobber-uploading `manifest.json`, `main.js`, and `styles.css`.
 - A `concurrency:` group keyed on the tag prevents racing runs for the same tag.
@@ -129,9 +129,9 @@ e. Check the workflow:
 
 f. Verify the release and attestations:
    - GitHub → Releases → confirm the new release exists with `manifest.json`, `main.js`, `styles.css` attached.
-   - `gh attestation verify main.js --repo mattmaiorana/simple-pinned-files`
-   - `gh attestation verify styles.css --repo mattmaiorana/simple-pinned-files`
-   - `gh attestation verify manifest.json --repo mattmaiorana/simple-pinned-files`
+   - `gh attestation verify main.js --repo mattmaiorana/pinned-files`
+   - `gh attestation verify styles.css --repo mattmaiorana/pinned-files`
+   - `gh attestation verify manifest.json --repo mattmaiorana/pinned-files`
 
 ### If something goes wrong
 

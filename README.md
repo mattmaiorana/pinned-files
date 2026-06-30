@@ -32,8 +32,8 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 
 ### Manual installation from a GitHub release
 
-1. Download `manifest.json`, `main.js`, and `styles.css` from the latest release on the [GitHub Releases page](https://github.com/mattmaiorana/simple-pinned-files/releases).
-2. Inside your vault, create the folder `.obsidian/plugins/pinned-files/`.
+1. Download `manifest.json`, `main.js`, and `styles.css` from the latest release on the [GitHub Releases page](https://github.com/mattmaiorana/pinned-files/releases).
+2. Inside your vault, create the folder `.obsidian/plugins/simple-pinned-files/`.
 3. Copy the three files into that folder.
 4. Reload Obsidian and enable **Pinned Files** in **Settings → Community plugins**.
 
@@ -42,7 +42,7 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 1. Clone this repository.
 2. `npm install`
 3. `npm run build`
-4. Copy `manifest.json`, `main.js`, and `styles.css` into the `.obsidian/plugins/pinned-files/` folder inside your vault.
+4. Copy `manifest.json`, `main.js`, and `styles.css` into the `.obsidian/plugins/simple-pinned-files/` folder inside your vault.
 5. Enable the plugin in **Settings → Community plugins**.
 
 ## Usage
@@ -69,7 +69,7 @@ Pinned files are stored in the plugin's own `data.json`. If Obsidian Sync is con
 This plugin is intentionally conservative about what it touches.
 
 - It does not create, delete, rename, move, or modify any notes, attachments, folders, frontmatter, or bookmarks.
-- The only file it ever writes is its own settings file at `.obsidian/plugins/pinned-files/data.json` inside your vault.
+- The only file it ever writes is its own settings file at `.obsidian/plugins/simple-pinned-files/data.json` inside your vault.
 - Rename and delete handlers only update stored pin paths after Obsidian reports that a file or folder has changed. They never originate a vault change.
 - Native File Explorer pin indicators are decoration only and do not interfere with native click, right-click, or drag behavior.
 
@@ -88,7 +88,7 @@ For manual installation, users only need these three files from a GitHub release
 
 ## Status
 
-v1.0.7 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes and [FUTURE_PLANS.md](FUTURE_PLANS.md) for ideas under consideration.
+v1.0.8 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes and [FUTURE_PLANS.md](FUTURE_PLANS.md) for ideas under consideration.
 
 ## License
 

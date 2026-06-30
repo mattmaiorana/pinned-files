@@ -2,6 +2,17 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.0.8] - 2026-06-30
+
+### Fixed
+
+- Fixed a "Plugin ID mismatch" error that blocked installing the plugin from the community store. The manifest `id` is the permanent community-store identifier and must remain `simple-pinned-files`; it had been changed to `pinned-files` during the display-name rename and is now restored. The user-facing display name remains "Pinned Files".
+
+### Notes
+
+- No data model or vault-content behavior changes.
+- Only the display `name` was changed in the rename to "Pinned Files"; the plugin `id` (and therefore the vault folder `.obsidian/plugins/simple-pinned-files/`) is unchanged, so existing installs and pinned data carry over seamlessly.
+
 ## [1.0.7] - 2026-05-25
 
 ### Added
