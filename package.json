@@ -1,6 +1,6 @@
 {
   "name": "pinned-files",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Pin files for quick access in a simple sidebar view.",
   "main": "main.js",
   "scripts": {

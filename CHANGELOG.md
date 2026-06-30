@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.0.10] - 2026-06-30
+
+### Changed
+
+- Set the manifest display name to "Simple Pinned Files" (plugin `id` unchanged: `pinned-files`).
+
 ## [1.0.9] - 2026-06-30
 
 ### Changed
