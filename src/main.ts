@@ -281,9 +281,8 @@ export default class PinnedFilesPlugin extends Plugin {
     }
     this.observedExplorerContainer = container;
     if (!container) return;
-    // Watch only childList/subtree: the File Explorer recreates rows on
-    // collapse/expand and lazy render, which drops our class. Toggling the
-    // class is an attribute change (not observed), so this cannot self-trigger.
+    // childList/subtree only — a class toggle is an attribute change, so
+    // re-applying the class can't self-trigger this observer.
     this.explorerObserver = new MutationObserver(() => {
       this.queueExplorerRefresh();
     });

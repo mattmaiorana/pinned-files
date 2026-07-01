@@ -6,7 +6,7 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 
 ## Screenshot
 
-![Pinned Files sidebar view with pinned file indicators](images/simple-pinned-notes.png)
+![Pinned Files sidebar view with pinned file indicators](images/pinned-files.png)
 
 ## Features
 
@@ -47,7 +47,7 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 
 ## Usage
 
-- Open the Pinned Files view from the command palette (**Open Pinned Files**) or the ribbon pin icon.
+- Open the Pinned Files view from the command palette (**Pinned Files: Open view**) or the ribbon pin icon.
 - Right-click a file in the native File Explorer → **Pin file** / **Unpin file**.
 - Click a pinned row to open the file. Cmd/Ctrl-click to open it in a new tab.
 - Right-click a pinned row in the Pinned Files view → **Unpin**.
@@ -56,7 +56,7 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 
 ## Settings
 
-- **Add Pinned Files to sidebar on startup** — adds the Pinned Files view to the left sidebar when Obsidian starts. It will not steal focus from your active sidebar tab.
+- **Add pinned files to sidebar on startup** — adds the Pinned Files view to the left sidebar when Obsidian starts. It will not steal focus from your active sidebar tab.
 - **Show section title** — when enabled, shows a small "Pinned Files" label above the pinned rows. On by default.
 - **Clear pinned files** — removes every entry from the pinned list. This only clears the plugin's record; it does not delete the files themselves.
 

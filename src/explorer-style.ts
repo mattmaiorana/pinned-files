@@ -1,9 +1,7 @@
 const PINNED_CLASS = "is-pinned-file";
 
-// Pin indicators in the native File Explorer are styled entirely from
-// `styles.css` (`.nav-file-title.is-pinned-file`). This module only toggles the
-// `is-pinned-file` class on the matching explorer rows — it never injects a
-// <style> element or generates CSS at runtime.
+// Toggles the `is-pinned-file` class on native File Explorer rows; the
+// indicator styling lives in styles.css.
 
 export function applyExplorerPinIndicators(paths: string[]): void {
   const pinned = new Set(paths);

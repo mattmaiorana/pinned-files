@@ -12,7 +12,7 @@
   - desktop drag-and-drop reordering of pinned rows
   - rename/delete handling
   - Lucide-style pin icons
-  - CSS-only native File Explorer pin indicators
+  - Native File Explorer pin indicators (a CSS class toggled on explorer rows)
   - Obsidian Sync live reload via polling `loadData()`
 
 ## Core architecture
@@ -65,7 +65,7 @@ Important bugs and fixes to remember:
 1.0.2 sync-hardening notes:
 
 - The boolean `saving` flag was replaced with a `saveCount` refcount. The original boolean cleared on the first concurrent save's completion, opening a stale-read window for the polling reload.
-- An `unloaded` flag prevents an in-flight reload from re-creating the explorer `<style>` after `onunload`.
+- An `unloaded` flag prevents an in-flight reload from re-applying explorer pin classes after `onunload`. (At the time of 1.0.2 the indicator was an injected `<style>` element; 1.0.9 replaced that with the toggled `is-pinned-file` class — see Core architecture.)
 - `normalizePinnedPaths` defensively handles non-array, non-string, and duplicate entries that could arrive via Obsidian Sync or hand-edited `data.json`.
 
 ## Design direction

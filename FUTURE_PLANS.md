@@ -33,7 +33,7 @@ The initial README polish pass and the GitHub Actions release workflow are now i
 - Consider light coalescing of rapid rename/delete vault events into a single `saveSettings` call.
 - Consider making the 5-second polling interval a setting, clamped to a sensible range (e.g. 2s–60s).
 - Consider pausing polling when the app is backgrounded on mobile, if Obsidian exposes a reliable signal.
-- Consider re-emitting the explorer `<style>` only when `pinnedPaths` actually changed. Several refresh paths regenerate it unconditionally; the textContent assignment is cheap but unnecessary on no-op refreshes.
+- Several refresh paths re-apply the explorer pin classes unconditionally. The class toggle is cheap, but the passes could be gated on an actual `pinnedPaths` change if it ever matters.
 
 ## Mobile UX
 
@@ -62,7 +62,7 @@ Behavior:
 
 Important implementation notes:
 
-- Do not mutate or interfere with Obsidian's native File Explorer DOM.
+- Do not interfere with Obsidian's native File Explorer drag behavior. (The pin indicator's `is-pinned-file` class toggle is the only sanctioned touch of explorer DOM.)
 - Do not implement custom file dragging in the native File Explorer.
 - Only listen for drop events in our own Pinned Files view.
 - Make sure this does not break normal click/right-click behavior.
@@ -94,10 +94,10 @@ Important implementation notes:
 
 ## Native File Explorer indicator ideas
 
-- Keep the current CSS-only managed style approach.
-- If Obsidian changes the native File Explorer selectors in the future, update the selector targeting.
+- Keep the current approach: static styling in `styles.css`, with `explorer-style.ts` toggling the `is-pinned-file` class on explorer rows.
+- If Obsidian changes the native File Explorer selectors in the future, update the selector targeting (`.nav-file-title[data-path]` and `.nav-files-container`).
 - Consider adding a graceful warning or setting if native indicators cannot be applied.
-- Avoid `MutationObserver` and DOM mutation unless absolutely necessary.
+- The `MutationObserver` (in `main.ts`) that re-applies the class on explorer re-render is necessary and should stay scoped to `childList`/`subtree` on `.nav-files-container`. Do not broaden it to attribute mutations (a class toggle is an attribute change and would self-trigger).
 
 ## Sidebar layout (deferred)
 
