@@ -43,9 +43,10 @@ export default class PinnedFilesPlugin extends Plugin {
   private saveCount = 0;
   private reloading = false;
   private unloaded = false;
-  private explorerObserver: MutationObserver | null = null;
-  private observedExplorerContainer: HTMLElement | null = null;
+  private explorerObservers: MutationObserver[] = [];
+  private observedExplorerContainers: HTMLElement[] = [];
   private explorerRefreshQueued = false;
+  private reloadErrorLogged = false;
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -137,12 +138,10 @@ export default class PinnedFilesPlugin extends Plugin {
 
   onunload(): void {
     this.unloaded = true;
-    if (this.explorerObserver) {
-      this.explorerObserver.disconnect();
-      this.explorerObserver = null;
-    }
-    this.observedExplorerContainer = null;
-    removeExplorerPinIndicators();
+    for (const observer of this.explorerObservers) observer.disconnect();
+    this.explorerObservers = [];
+    this.observedExplorerContainers = [];
+    removeExplorerPinIndicators(this.getExplorerContainers());
   }
 
   async loadSettings(): Promise<void> {
@@ -173,6 +172,7 @@ export default class PinnedFilesPlugin extends Plugin {
       const raw = (await this.loadData()) as
         | Partial<PinnedFilesSettings>
         | null;
+      this.reloadErrorLogged = false;
       if (this.unloaded || this.saveCount > 0) return;
       const next: PinnedFilesSettings = {
         ...DEFAULT_SETTINGS,
@@ -183,10 +183,22 @@ export default class PinnedFilesPlugin extends Plugin {
         next.pinnedPaths,
         this.settings.pinnedPaths
       );
+      const sectionTitleChanged =
+        next.showSectionTitle !== this.settings.showSectionTitle;
       this.settings = next;
       if (pinsChanged) {
-        this.refreshView();
         this.updateExplorerStyles();
+      }
+      if (pinsChanged || sectionTitleChanged) {
+        this.refreshView();
+      }
+    } catch (e) {
+      if (!this.reloadErrorLogged) {
+        this.reloadErrorLogged = true;
+        console.error(
+          "Pinned Files: failed to reload plugin data from disk",
+          e
+        );
       }
     } finally {
       this.reloading = false;
@@ -218,6 +230,8 @@ export default class PinnedFilesPlugin extends Plugin {
   async reorderPinnedPaths(newOrder: string[]): Promise<void> {
     const current = this.settings.pinnedPaths;
     if (newOrder.length !== current.length) return;
+    // Require a true permutation: no duplicates, every entry already pinned.
+    if (new Set(newOrder).size !== newOrder.length) return;
     const currentSet = new Set(current);
     for (const p of newOrder) {
       if (!currentSet.has(p)) return;
@@ -266,30 +280,37 @@ export default class PinnedFilesPlugin extends Plugin {
   }
 
   updateExplorerStyles(): void {
-    applyExplorerPinIndicators(this.settings.pinnedPaths);
+    applyExplorerPinIndicators(
+      this.getExplorerContainers(),
+      this.settings.pinnedPaths
+    );
+  }
+
+  private getExplorerContainers(): HTMLElement[] {
+    return this.app.workspace
+      .getLeavesOfType("file-explorer")
+      .map((leaf) => leaf.view.containerEl);
   }
 
   private syncExplorerObserver(): void {
     if (this.unloaded) return;
-    const container = activeDocument.querySelector<HTMLElement>(
-      ".nav-files-container"
-    );
-    if (container === this.observedExplorerContainer) return;
-    if (this.explorerObserver) {
-      this.explorerObserver.disconnect();
-      this.explorerObserver = null;
+    const containers = this.getExplorerContainers();
+    if (
+      containers.length === this.observedExplorerContainers.length &&
+      containers.every((c, i) => c === this.observedExplorerContainers[i])
+    ) {
+      return;
     }
-    this.observedExplorerContainer = container;
-    if (!container) return;
-    // childList/subtree only — a class toggle is an attribute change, so
-    // re-applying the class can't self-trigger this observer.
-    this.explorerObserver = new MutationObserver(() => {
-      this.queueExplorerRefresh();
-    });
-    this.explorerObserver.observe(container, {
-      childList: true,
-      subtree: true,
-    });
+    for (const observer of this.explorerObservers) observer.disconnect();
+    this.explorerObservers = [];
+    this.observedExplorerContainers = containers;
+    for (const container of containers) {
+      // childList/subtree only — a class toggle is an attribute change, so
+      // re-applying the class can't self-trigger this observer.
+      const observer = new MutationObserver(() => this.queueExplorerRefresh());
+      observer.observe(container, { childList: true, subtree: true });
+      this.explorerObservers.push(observer);
+    }
     this.updateExplorerStyles();
   }
 

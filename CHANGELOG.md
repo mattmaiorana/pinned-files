@@ -2,6 +2,22 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.1] - 2026-07-09
+
+### Fixed
+
+- Native File Explorer pin indicators now resolve the explorer through its workspace leaves instead of the focused `activeDocument`. This keeps indicators correct when a popout window is focused (previously the observer could disconnect, pin/unpin and synced changes could target the wrong window, and stale pin badges could be left in the main explorer after disabling the plugin), and it correctly handles multiple File Explorer panes.
+- The 5-second settings-reload poll now catches read failures (e.g. a partially written `data.json` during sync) and logs once instead of throwing an unhandled rejection every tick.
+- A `showSectionTitle` change synced from another device now refreshes the view immediately instead of sitting half-applied until the next pin change.
+
+### Changed
+
+- `reorderPinnedPaths` now rejects non-permutation input (duplicate entries), hardening the reorder validation boundary.
+
+### Notes
+
+- No data model or vault-content behavior changes.
+
 ## [1.1.0] - 2026-06-30
 
 ### Changed
