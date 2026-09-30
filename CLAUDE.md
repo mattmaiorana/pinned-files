@@ -1,5 +1,7 @@
 # Pinned Files — Claude Notes
 
+> **Read the vault's doctrine first.** Before anything else, read `/Users/matt/Obsidian Vaults/AI Vault/AGENTS.md` in full and follow it. It holds the house rules for every session, this one included: safety, sending, tickets, commits, and how to write. This file governs this repo's code: how it's built, tested, documented, versioned, and deployed, and what it tracks in git. The vault's governs everything else, and wins any disagreement outside the code.
+
 **Launched into this repo, greet and wait.** No status recap and no suggested next steps; Matt has a task in mind. If you need to know where the project stands, it's `git log` plus `CHANGELOG.md`.
 
 ## Project status
