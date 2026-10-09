@@ -79,9 +79,9 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
     // The style and heading settings only matter while new tabs show pins.
     if (this.plugin.settings.showOnNewTab) {
       new Setting(containerEl)
-        .setName("Show as a pinned section")
+        .setName("Show as a separate list")
         .setDesc(
-          "On: a separate list of pinned files below the new tab buttons. Off: one button per file alongside New note and Go to file."
+          "On: your pinned files as their own list below the new tab buttons. Off: one button per file, mixed in with New note and Go to file."
         )
         .addToggle((toggle) =>
           toggle

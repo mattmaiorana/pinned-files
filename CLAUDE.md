@@ -173,4 +173,4 @@ f. Verify the release and attestations:
 - Delete pinned file removes pin.
 - Native File Explorer pin indicator appears/disappears.
 - Disabling plugin removes native File Explorer pin indicators.
-- New tab shows the Pinned section (and the pills with the section setting off); clicking one opens it in that tab; the setting turns them off; pin/unpin updates an open new tab; disabling the plugin removes them.
+- New tab shows the Pinned Files list (and the pills with "Show as a separate list" off); clicking one opens it in that tab; the setting turns them off; pin/unpin updates an open new tab; disabling the plugin removes them.

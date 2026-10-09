@@ -8,7 +8,7 @@ All notable changes to Pinned Files will be documented in this file.
 
 - Pinned files on the new tab page, beside Obsidian's New note, New base, and Go to file. Each opens its file in that tab. Settings:
   - "Show pinned files on new tabs" (`showOnNewTab`, default on).
-  - "Show as a pinned section" (`newTabStyle`, default `"section"`): a "Pinned Files" list under the buttons, one row per file with a pin icon and its name; off, one pill button per file inside Obsidian's own list instead.
+  - "Show as a separate list" (`newTabStyle`, default `"section"`): a "Pinned Files" list under the buttons, one row per file with a pin icon and its name; off, one pill button per file inside Obsidian's own list instead.
   - "Show heading on new tabs" (`newTabHeading`, default on): the "Pinned Files" heading, left-aligned in both styles. With it off, the section style draws a rule above the list instead.
 - With "Show pinned files on new tabs" off, its two related settings are hidden.
 - The buttons stay centered exactly where Obsidian places them; the section starts at their left edge and runs right as far as a name needs (up to 480 px, longer names cut off with an ellipsis). Hovering a pin shows its full path.
