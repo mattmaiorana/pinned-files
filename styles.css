@@ -10,12 +10,7 @@
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-semibold);
   color: var(--text-faint);
-  padding: 16px 0 var(--size-4-1, 4px) var(--size-4-2, 8px);
-}
-
-/* "Wide letter spacing", for an all-caps title. */
-.pinned-files-section-title.is-spaced {
-  letter-spacing: 0.08em;
+  padding: var(--size-4-2, 8px) 0 var(--size-4-1, 4px) var(--size-4-2, 8px);
 }
 
 .pinned-files-list {
