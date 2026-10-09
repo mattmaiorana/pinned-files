@@ -182,9 +182,13 @@
 }
 
 .empty-state-action-list > .pinned-files-new-tab-title {
-  text-align: center;
   margin-top: var(--size-4-3);
   padding-bottom: 0;
+}
+
+.pinned-files-new-tab-section.is-headless {
+  padding-top: var(--size-4-3);
+  border-top: 1px solid var(--background-modifier-border);
 }
 
 .pinned-files-new-tab-title {
