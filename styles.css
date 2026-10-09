@@ -6,10 +6,11 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-normal);
-  padding: 16px 0 8px var(--size-4-2, 8px);
+  /* Same look as the new tab page's heading. */
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-semibold);
+  color: var(--text-faint);
+  padding: 16px 0 var(--size-4-1, 4px) var(--size-4-2, 8px);
 }
 
 /* "Wide letter spacing", for an all-caps title. */
