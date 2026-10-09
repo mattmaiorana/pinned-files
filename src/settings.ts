@@ -71,36 +71,41 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
             this.plugin.settings.showOnNewTab = value;
             await this.plugin.saveSettings();
             this.plugin.updateEmptyTabActions();
+            // Redraw so the new tab settings below show or hide with it.
+            this.display();
           })
       );
 
-    new Setting(containerEl)
-      .setName("Show as a pinned section")
-      .setDesc(
-        "On: a separate pinned list below the new tab buttons, with each file's folder. Off: one button per file alongside New note and Go to file."
-      )
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.newTabStyle === "section")
-          .onChange(async (value) => {
-            this.plugin.settings.newTabStyle = value ? "section" : "buttons";
-            await this.plugin.saveSettings();
-            this.plugin.updateEmptyTabActions();
-          })
-      );
+    // The style and heading settings only matter while new tabs show pins.
+    if (this.plugin.settings.showOnNewTab) {
+      new Setting(containerEl)
+        .setName("Show as a pinned section")
+        .setDesc(
+          "On: a separate list of pinned files below the new tab buttons. Off: one button per file alongside New note and Go to file."
+        )
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.settings.newTabStyle === "section")
+            .onChange(async (value) => {
+              this.plugin.settings.newTabStyle = value ? "section" : "buttons";
+              await this.plugin.saveSettings();
+              this.plugin.updateEmptyTabActions();
+            })
+        );
 
-    new Setting(containerEl)
-      .setName("Show heading on new tabs")
-      .setDesc('Show a "Pinned Files" heading above the pinned files on the new tab page, in either style.')
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.newTabHeading)
-          .onChange(async (value) => {
-            this.plugin.settings.newTabHeading = value;
-            await this.plugin.saveSettings();
-            this.plugin.updateEmptyTabActions();
-          })
-      );
+      new Setting(containerEl)
+        .setName("Show heading on new tabs")
+        .setDesc('Show a "Pinned Files" heading above the pinned files on the new tab page, in either style.')
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.settings.newTabHeading)
+            .onChange(async (value) => {
+              this.plugin.settings.newTabHeading = value;
+              await this.plugin.saveSettings();
+              this.plugin.updateEmptyTabActions();
+            })
+        );
+    }
 
     new Setting(containerEl)
       .setName("Clear pinned files")
