@@ -6,14 +6,18 @@ All notable changes to Pinned Files will be documented in this file.
 
 ### Added
 
-- Pinned files on the new tab page, beside Obsidian's New note, New base, and Go to file. Each opens its file in that tab. Settings:
-  - "Show pinned files on new tabs" (`showOnNewTab`, default off, so nothing changes until you turn it on).
-  - "Show as a separate list" (`newTabStyle`, default `"section"`): a "Pinned Files" list under the buttons, one row per file with a pin icon and its name; off, one pill button per file inside Obsidian's own list instead.
-  - "Show heading on new tabs" (`newTabHeading`, default on): the "Pinned Files" heading, left-aligned in both styles.
-- Your own text for both titles: "Section title" (`sectionTitleText`) for the sidebar and "New tab heading" (`newTabHeadingText`) for the new tab page, each shown in settings only while its title is on. Both default to "Pinned Files", and a blank field falls back to it. The sidebar title keeps its original look by default (bold, all caps, letter-spaced). A "Subtle title" toggle (`sectionTitleSubtle`, default off) switches it to the new tab heading's look instead: smaller UI font, semibold, faint, shown exactly as typed, with the same spacing. With the title off, the list gets a little room above its first row.
-- With "Show pinned files on new tabs" off, its related settings are hidden.
-- The buttons stay centered exactly where Obsidian places them; the section starts at their left edge and runs right as far as a name needs (up to 480 px, longer names cut off with an ellipsis). Hovering a pin shows its full path.
-- Buttons rebuild only when what's shown changes, so an unrelated layout change never interrupts a click; a pin synced before its file arrives appears once the file does (both from a Codex review). Applied on `active-leaf-change` as well as `layout-change`, so a new tab shows them at once (about 10 ms) rather than up to a second later.
+- **Pinned files on the new tab page.** Turn on "Show pinned files on new tabs" (`showOnNewTab`, off by default, so nothing changes until you do) and each pinned file opens from a new tab with one click, in that tab. When it's on:
+  - "Show heading on new tabs" (`newTabHeading`, on by default) and "New tab heading" (`newTabHeadingText`, default "Pinned Files").
+  - "Show as a separate list" (`newTabStyle`, on by default): your pinned files as their own list below Obsidian's buttons, one row per file with a pin icon and its name. Off: one pill button per file inside Obsidian's own list.
+  - The related settings are hidden while "Show pinned files on new tabs" is off.
+- **Your own sidebar title.** "Section title" (`sectionTitleText`, default "Pinned Files"); a blank field falls back to the default.
+- **"Subtle title"** (`sectionTitleSubtle`, off by default): a smaller, quieter sidebar title shown exactly as typed, with the same spacing. Off, the title keeps its original bold, all-caps look.
+
+### Details
+
+- Obsidian's buttons stay centered where it places them; the list starts at their left edge and runs right as far as a name needs (up to 480 px, longer names cut off with an ellipsis). The heading is left-aligned in both styles. Hovering a pinned file shows its full path.
+- With the sidebar title off, the list gets a little room above its first row.
+- The new tab entries rebuild only when what's shown changes, so an unrelated layout change never interrupts a click; a pin synced before its file arrives appears once the file does (both from a Codex review). They're applied on `active-leaf-change` as well as `layout-change`, so a new tab shows them at once (about 10 ms) rather than up to a second later.
 
 ## [1.1.1] - 2026-07-09
 

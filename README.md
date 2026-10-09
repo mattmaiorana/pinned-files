@@ -17,7 +17,8 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 - Right-click a pinned item to unpin it.
 - Drag and drop pinned rows to reorder them (desktop).
 - See subtle pin indicators in the native File Explorer.
-- Open a pinned file from the new tab page: a Pinned Files section below New note and Go to file, or one button per file alongside them (settings), with the heading's text, and the sidebar title's, yours to set.
+- Optionally list your pinned files on the new tab page, as their own list or as buttons beside New note and Go to file.
+- Set your own text for the sidebar title and the new tab heading.
 - Handles renamed or deleted pinned files automatically.
 - Supports Obsidian Sync by periodically reloading its own plugin data.
 
@@ -57,9 +58,15 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 
 ## Settings
 
-- **Add pinned files to sidebar on startup** — adds the Pinned Files view to the left sidebar when Obsidian starts. It will not steal focus from your active sidebar tab.
-- **Show section title** — when enabled, shows a small "Pinned Files" label above the pinned rows. On by default.
-- **Clear pinned files** — removes every entry from the pinned list. This only clears the plugin's record; it does not delete the files themselves.
+- **Add pinned files to sidebar on startup**: adds the Pinned Files view to the left sidebar when Obsidian starts. It will not steal focus from your active sidebar tab.
+- **Show section title**: shows a small title above the pinned rows in the sidebar. On by default.
+  - **Section title**: the title's text. Defaults to "Pinned Files"; leave it blank to go back to that.
+  - **Subtle title**: a smaller, quieter title shown exactly as typed, instead of the bold all-caps one. Off by default.
+- **Show pinned files on new tabs**: lists your pinned files on Obsidian's new tab page, so one click from a new tab opens any of them in that tab. Off by default. When on:
+  - **Show heading on new tabs**: a heading above them. On by default.
+  - **New tab heading**: the heading's text. Defaults to "Pinned Files"; leave it blank to go back to that.
+  - **Show as a separate list**: your pinned files as their own list below the new tab buttons. Off: one button per file, mixed in with Obsidian's own. On by default.
+- **Clear pinned files**: removes every entry from the pinned list. This only clears the plugin's record; it does not delete the files themselves.
 
 ## Obsidian Sync
 
