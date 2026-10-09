@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.2] - 2026-10-09
+
+### Added
+
+- Pinned files appear as buttons on the new tab page, beside New note, New base, and Go to file. Each opens its file in that tab. A setting, "Show pinned files on new tabs", on by default (`showOnNewTab`). The buttons reuse Obsidian's own empty-state classes so they match the native ones, and are added on `layout-change` and whenever the pinned list changes, synced changes included.
+
 ## [1.1.1] - 2026-07-09
 
 ### Fixed

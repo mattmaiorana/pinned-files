@@ -5,12 +5,14 @@ export interface PinnedFilesSettings {
   pinnedPaths: string[];
   openViewOnStartup: boolean;
   showSectionTitle: boolean;
+  showOnNewTab: boolean;
 }
 
 export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   pinnedPaths: [],
   openViewOnStartup: true,
   showSectionTitle: true,
+  showOnNewTab: true,
 };
 
 export class PinnedFilesSettingTab extends PluginSettingTab {
@@ -49,6 +51,21 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
             this.plugin.settings.showSectionTitle = value;
             await this.plugin.saveSettings();
             this.plugin.refreshView();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Show pinned files on new tabs")
+      .setDesc(
+        "Add a button for each pinned file to the new tab page, beside New note and Go to file."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showOnNewTab)
+          .onChange(async (value) => {
+            this.plugin.settings.showOnNewTab = value;
+            await this.plugin.saveSettings();
+            this.plugin.updateEmptyTabActions();
           })
       );
 

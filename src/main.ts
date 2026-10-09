@@ -15,6 +15,7 @@ import {
   applyExplorerPinIndicators,
   removeExplorerPinIndicators,
 } from "./explorer-style";
+import { applyEmptyTabActions, removeEmptyTabActions } from "./empty-tab";
 
 const SETTINGS_RELOAD_INTERVAL_MS = 5000;
 
@@ -106,6 +107,16 @@ export default class PinnedFilesPlugin extends Plugin {
       })
     );
 
+    // A pinned file that arrives after its pin (Obsidian Sync can deliver the
+    // settings first) gets its new tab button as soon as it exists.
+    this.registerEvent(
+      this.app.vault.on("create", (file) => {
+        if (file instanceof TFile && this.isPinned(file.path)) {
+          this.updateEmptyTabActions();
+        }
+      })
+    );
+
     this.registerEvent(
       this.app.workspace.on("active-leaf-change", () => {
         this.updateActiveStates();
@@ -124,12 +135,14 @@ export default class PinnedFilesPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("layout-change", () => {
         this.syncExplorerObserver();
+        this.updateEmptyTabActions();
       })
     );
 
     this.app.workspace.onLayoutReady(() => {
       this.syncExplorerObserver();
       this.updateExplorerStyles();
+      this.updateEmptyTabActions();
       if (this.settings.openViewOnStartup) {
         void this.ensurePinnedView();
       }
@@ -142,6 +155,7 @@ export default class PinnedFilesPlugin extends Plugin {
     this.explorerObservers = [];
     this.observedExplorerContainers = [];
     removeExplorerPinIndicators(this.getExplorerContainers());
+    removeEmptyTabActions(this.app);
   }
 
   async loadSettings(): Promise<void> {
@@ -185,12 +199,17 @@ export default class PinnedFilesPlugin extends Plugin {
       );
       const sectionTitleChanged =
         next.showSectionTitle !== this.settings.showSectionTitle;
+      const newTabChanged =
+        next.showOnNewTab !== this.settings.showOnNewTab;
       this.settings = next;
       if (pinsChanged) {
         this.updateExplorerStyles();
       }
       if (pinsChanged || sectionTitleChanged) {
         this.refreshView();
+      }
+      if (pinsChanged || newTabChanged) {
+        this.updateEmptyTabActions();
       }
     } catch (e) {
       if (!this.reloadErrorLogged) {
@@ -273,6 +292,16 @@ export default class PinnedFilesPlugin extends Plugin {
 
   refreshView(): void {
     for (const view of this.viewInstances) view.render();
+    this.updateEmptyTabActions();
+  }
+
+  updateEmptyTabActions(): void {
+    if (this.unloaded) return;
+    if (this.settings.showOnNewTab) {
+      applyEmptyTabActions(this.app, this.settings.pinnedPaths);
+    } else {
+      removeEmptyTabActions(this.app);
+    }
   }
 
   updateActiveStates(): void {
