@@ -13,6 +13,9 @@ export type NewTabStyle = "buttons" | "section";
 
 const ACTION_CLASS = "pinned-files-empty-action";
 const SECTION_CLASS = "pinned-files-new-tab-section";
+// Set on the section's parent (Obsidian's .empty-state-container) while the
+// section is there, so styles.css can lay the container out without `:has`.
+const HAS_SECTION_CLASS = "pinned-files-has-section";
 
 function actionList(leaf: WorkspaceLeaf): HTMLElement | null {
   return leaf.view.containerEl.querySelector<HTMLElement>(
@@ -25,6 +28,7 @@ function clear(list: HTMLElement): void {
   list.parentElement
     ?.querySelectorAll(`.${SECTION_CLASS}`)
     .forEach((el) => el.remove());
+  list.parentElement?.removeClass(HAS_SECTION_CLASS);
   delete list.dataset.pinnedFiles;
 }
 
@@ -73,6 +77,7 @@ export function applyEmptyTabActions(
       if (!parent) continue;
       const section = parent.createDiv({ cls: SECTION_CLASS });
       list.after(section);
+      parent.addClass(HAS_SECTION_CLASS);
       if (showHeading) {
         section.createDiv({ cls: "pinned-files-new-tab-title", text: heading ?? "" });
       }

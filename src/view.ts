@@ -175,21 +175,12 @@ export class PinnedFilesView extends ItemView {
     );
     const text = titleEl?.textContent ?? row.dataset.path ?? "";
     if (!text) return;
-    const dragImage = activeDocument.createElement("div");
-    dragImage.textContent = text;
-    const s = dragImage.style;
-    s.position = "fixed";
-    s.top = "-1000px";
-    s.left = "-1000px";
-    s.pointerEvents = "none";
-    s.whiteSpace = "nowrap";
-    s.background = "transparent";
-    s.padding = "2px 4px";
-    s.fontSize = "var(--nav-item-size, var(--font-ui-small, 13px))";
-    s.fontWeight = "var(--nav-item-weight, inherit)";
-    s.lineHeight = "var(--line-height-tight, 1.3)";
-    s.color = "var(--text-normal)";
-    activeDocument.body.appendChild(dragImage);
+    // Styled by .pinned-files-drag-image in styles.css. The focused window's
+    // document is the right one for a drag image.
+    const dragImage = activeDocument.body.createDiv({
+      cls: "pinned-files-drag-image",
+      text,
+    });
     this.dragImageEl = dragImage;
     evt.dataTransfer.setDragImage(dragImage, 0, 0);
     window.setTimeout(() => {

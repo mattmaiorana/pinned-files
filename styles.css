@@ -83,6 +83,22 @@
 /* Visible dimming of the source row in the list itself. Applied on the next
    animation frame (after the drag image has been captured) so the floating
    drag preview stays fully readable. */
+/* The text-only preview shown under the cursor while dragging a row. It is
+   rendered off screen; the browser snapshots it for setDragImage. */
+.pinned-files-drag-image {
+  position: fixed;
+  top: -1000px;
+  left: -1000px;
+  pointer-events: none;
+  white-space: nowrap;
+  background: transparent;
+  padding: 2px 4px;
+  font-size: var(--nav-item-size, var(--font-ui-small, 13px));
+  font-weight: var(--nav-item-weight, inherit);
+  line-height: var(--line-height-tight, 1.3);
+  color: var(--text-normal);
+}
+
 .pinned-files-row.is-dragging-source {
   opacity: 0.45;
 }
@@ -179,8 +195,10 @@
    left, so the buttons stay centered on screen exactly as before; the section
    starts at the buttons' left edge and runs right past the container. Its
    negative right margin cancels its width in the container's sizing, so a
-   long pinned name never pushes the buttons off center. */
-.empty-state-container:has(> .pinned-files-new-tab-section) {
+   long pinned name never pushes the buttons off center. The container class
+   is set from empty-tab.ts while the section is there (no :has, which the
+   Obsidian review flags for performance). */
+.empty-state-container.pinned-files-has-section {
   width: fit-content;
   text-align: left;
 }
