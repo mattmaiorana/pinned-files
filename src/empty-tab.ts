@@ -1,11 +1,18 @@
 import { App, TFile, WorkspaceLeaf, setIcon } from "obsidian";
 
-// Pinned files as actions on Obsidian's empty "new tab" page, beside its own
-// "New note", "New base", and "Go to file". Each one opens the file in that tab.
-// The page is Obsidian's view of type "empty"; its actions are pill buttons in
-// `.empty-state-action-list`, and ours copy their classes so they look native.
+// Pinned files on Obsidian's empty "new tab" page (leaves of type "empty"), in
+// one of two styles:
+// - "buttons": a pill per file inside `.empty-state-action-list`, beside
+//   "New note", "New base", and "Go to file", copying their classes so they
+//   look native.
+// - "section": a labeled "Pinned" list placed after that action list, one row
+//   per file with its folder underneath.
+// Each opens its file in that same tab.
+
+export type NewTabStyle = "buttons" | "section";
 
 const ACTION_CLASS = "pinned-files-empty-action";
+const SECTION_CLASS = "pinned-files-new-tab-section";
 
 function actionList(leaf: WorkspaceLeaf): HTMLElement | null {
   return leaf.view.containerEl.querySelector<HTMLElement>(
@@ -13,44 +20,86 @@ function actionList(leaf: WorkspaceLeaf): HTMLElement | null {
   );
 }
 
+function clear(list: HTMLElement): void {
+  list.querySelectorAll(`.${ACTION_CLASS}`).forEach((el) => el.remove());
+  list.parentElement
+    ?.querySelectorAll(`.${SECTION_CLASS}`)
+    .forEach((el) => el.remove());
+  delete list.dataset.pinnedFiles;
+}
+
+function makeActivatable(el: HTMLElement, open: () => void): void {
+  el.addEventListener("click", open);
+  el.addEventListener("keydown", (evt) => {
+    if (evt.key === "Enter" || evt.key === " ") {
+      evt.preventDefault();
+      open();
+    }
+  });
+}
+
+function folderLabel(file: TFile): string {
+  const parent = file.parent?.path ?? "";
+  return parent === "" || parent === "/" ? "Vault root" : parent;
+}
+
 export function removeEmptyTabActions(app: App): void {
   for (const leaf of app.workspace.getLeavesOfType("empty")) {
     const list = actionList(leaf);
-    if (!list) continue;
-    list.querySelectorAll(`.${ACTION_CLASS}`).forEach((el) => el.remove());
-    delete list.dataset.pinnedFiles;
+    if (list) clear(list);
   }
 }
 
-export function applyEmptyTabActions(app: App, pinnedPaths: string[]): void {
+export function applyEmptyTabActions(
+  app: App,
+  pinnedPaths: string[],
+  style: NewTabStyle
+): void {
   for (const leaf of app.workspace.getLeavesOfType("empty")) {
     const list = actionList(leaf);
     if (!list) continue;
     const files = pinnedPaths
       .map((path) => app.vault.getAbstractFileByPath(path))
       .filter((f): f is TFile => f instanceof TFile);
-    // Rebuild only when the set of files shown changes, so an unrelated
-    // layout change never destroys a button mid-click or drops its focus.
-    const signature = files.map((f) => f.path).join("\n");
+    // Rebuild only when what's shown changes, so an unrelated layout change
+    // never destroys a button mid-click or drops its focus.
+    const signature = style + "\n" + files.map((f) => f.path).join("\n");
     if (list.dataset.pinnedFiles === signature) continue;
+    clear(list);
     list.dataset.pinnedFiles = signature;
-    list.querySelectorAll(`.${ACTION_CLASS}`).forEach((el) => el.remove());
+    if (files.length === 0) continue;
+
+    if (style === "section") {
+      // Created through the list's own parent so it belongs to that window's
+      // document (a new tab can be in a popout), then placed right after it.
+      const parent = list.parentElement;
+      if (!parent) continue;
+      const section = parent.createDiv({ cls: SECTION_CLASS });
+      list.after(section);
+      section.createDiv({ cls: "pinned-files-new-tab-title", text: "Pinned" });
+      for (const file of files) {
+        const row = section.createDiv({
+          cls: "pinned-files-new-tab-row",
+          // The full path disambiguates two pins with the same name.
+          attr: { tabindex: "0", role: "button", "aria-label": file.path, title: file.path },
+        });
+        setIcon(row.createSpan({ cls: "pinned-files-new-tab-icon" }), "pin");
+        const text = row.createSpan({ cls: "pinned-files-new-tab-text" });
+        text.createSpan({ cls: "pinned-files-new-tab-name", text: file.basename });
+        text.createSpan({ cls: "pinned-files-new-tab-path", text: folderLabel(file) });
+        makeActivatable(row, () => void leaf.openFile(file));
+      }
+      continue;
+    }
+
     for (const file of files) {
       const action = list.createDiv({
         cls: `text-icon-button tappable mod-pill empty-state-action ${ACTION_CLASS}`,
-        // The full path disambiguates two pins with the same name.
         attr: { tabindex: "0", role: "button", "aria-label": file.path, title: file.path },
       });
       setIcon(action.createSpan({ cls: "text-button-icon" }), "pin");
       action.createSpan({ cls: "text-button-label", text: file.basename });
-      const open = () => void leaf.openFile(file);
-      action.addEventListener("click", open);
-      action.addEventListener("keydown", (evt) => {
-        if (evt.key === "Enter" || evt.key === " ") {
-          evt.preventDefault();
-          open();
-        }
-      });
+      makeActivatable(action, () => void leaf.openFile(file));
     }
   }
 }

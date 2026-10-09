@@ -200,7 +200,8 @@ export default class PinnedFilesPlugin extends Plugin {
       const sectionTitleChanged =
         next.showSectionTitle !== this.settings.showSectionTitle;
       const newTabChanged =
-        next.showOnNewTab !== this.settings.showOnNewTab;
+        next.showOnNewTab !== this.settings.showOnNewTab ||
+        next.newTabStyle !== this.settings.newTabStyle;
       this.settings = next;
       if (pinsChanged) {
         this.updateExplorerStyles();
@@ -298,7 +299,11 @@ export default class PinnedFilesPlugin extends Plugin {
   updateEmptyTabActions(): void {
     if (this.unloaded) return;
     if (this.settings.showOnNewTab) {
-      applyEmptyTabActions(this.app, this.settings.pinnedPaths);
+      applyEmptyTabActions(
+        this.app,
+        this.settings.pinnedPaths,
+        this.settings.newTabStyle === "buttons" ? "buttons" : "section"
+      );
     } else {
       removeEmptyTabActions(this.app);
     }

@@ -158,3 +158,72 @@
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
+
+/* Pinned section on the new tab page (newTabStyle "section"). */
+.pinned-files-new-tab-section {
+  margin-top: var(--size-4-6);
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pinned-files-new-tab-title {
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0 var(--size-4-2) var(--size-4-1);
+}
+
+.pinned-files-new-tab-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+  padding: var(--size-4-1) var(--size-4-2);
+  border-radius: var(--radius-s);
+  cursor: var(--cursor);
+  text-align: left;
+}
+
+.pinned-files-new-tab-row:hover,
+.pinned-files-new-tab-row:focus-visible {
+  background-color: var(--background-modifier-hover);
+}
+
+.pinned-files-new-tab-icon {
+  display: flex;
+  color: var(--text-muted);
+  flex: none;
+}
+
+.pinned-files-new-tab-icon svg {
+  width: var(--icon-s);
+  height: var(--icon-s);
+}
+
+.pinned-files-new-tab-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pinned-files-new-tab-name {
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pinned-files-new-tab-path {
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

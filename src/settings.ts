@@ -1,4 +1,5 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
+import type { NewTabStyle } from "./empty-tab";
 import type PinnedFilesPlugin from "./main";
 
 export interface PinnedFilesSettings {
@@ -6,6 +7,7 @@ export interface PinnedFilesSettings {
   openViewOnStartup: boolean;
   showSectionTitle: boolean;
   showOnNewTab: boolean;
+  newTabStyle: NewTabStyle;
 }
 
 export const DEFAULT_SETTINGS: PinnedFilesSettings = {
@@ -13,6 +15,7 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   openViewOnStartup: true,
   showSectionTitle: true,
   showOnNewTab: true,
+  newTabStyle: "section",
 };
 
 export class PinnedFilesSettingTab extends PluginSettingTab {
@@ -64,6 +67,21 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.showOnNewTab)
           .onChange(async (value) => {
             this.plugin.settings.showOnNewTab = value;
+            await this.plugin.saveSettings();
+            this.plugin.updateEmptyTabActions();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Show as a pinned section")
+      .setDesc(
+        "On: a separate pinned list below the new tab buttons, with each file's folder. Off: one button per file alongside New note and Go to file."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.newTabStyle === "section")
+          .onChange(async (value) => {
+            this.plugin.settings.newTabStyle = value ? "section" : "buttons";
             await this.plugin.saveSettings();
             this.plugin.updateEmptyTabActions();
           })

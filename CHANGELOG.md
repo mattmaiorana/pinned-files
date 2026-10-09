@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.3] - 2026-10-09
+
+### Added
+
+- A "Pinned" section style for the new tab page, now the default: a labeled list below New note, New base, and Go to file, separated by a small gap, one row per file with a pin icon, its name, and its folder underneath (names cut off with an ellipsis). The setting "Show as a pinned section" (`newTabStyle`, `"section"` or `"buttons"`) switches back to 1.1.2's pills alongside the native buttons.
+
 ## [1.1.2] - 2026-10-09
 
 ### Added
