@@ -6,9 +6,20 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  /* Same look as the new tab page's heading. */
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-normal);
+  padding: 16px 0 8px var(--size-4-2, 8px);
+}
+
+/* "Subtle title": the new tab heading's look, shown as typed. */
+.pinned-files-section-title.is-subtle {
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-semibold);
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--text-faint);
   padding: var(--size-4-2, 8px) 0 var(--size-4-1, 4px) var(--size-4-2, 8px);
 }

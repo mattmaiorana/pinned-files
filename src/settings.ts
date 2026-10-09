@@ -10,6 +10,7 @@ export interface PinnedFilesSettings {
   newTabStyle: NewTabStyle;
   newTabHeading: boolean;
   sectionTitleText: string;
+  sectionTitleSubtle: boolean;
   newTabHeadingText: string;
 }
 
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   newTabStyle: "section",
   newTabHeading: true,
   sectionTitleText: DEFAULT_TITLE,
+  sectionTitleSubtle: false,
   newTabHeadingText: DEFAULT_TITLE,
 };
 
@@ -84,6 +86,19 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
             .setValue(this.plugin.settings.sectionTitleText)
             .onChange(async (value) => {
               this.plugin.settings.sectionTitleText = value;
+              await this.plugin.saveSettings();
+              this.plugin.refreshView();
+            })
+        );
+
+      new Setting(containerEl)
+        .setName("Subtle title")
+        .setDesc("A smaller, quieter title shown exactly as typed, matching the new tab heading. Off: the bold all-caps title.")
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.settings.sectionTitleSubtle)
+            .onChange(async (value) => {
+              this.plugin.settings.sectionTitleSubtle = value;
               await this.plugin.saveSettings();
               this.plugin.refreshView();
             })

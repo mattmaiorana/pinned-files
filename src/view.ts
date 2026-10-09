@@ -63,7 +63,9 @@ export class PinnedFilesView extends ItemView {
 
     if (this.plugin.settings.showSectionTitle) {
       container.createDiv({
-        cls: "pinned-files-section-title",
+        cls: this.plugin.settings.sectionTitleSubtle
+          ? "pinned-files-section-title is-subtle"
+          : "pinned-files-section-title",
         text: titleText(this.plugin.settings.sectionTitleText),
       });
     }
