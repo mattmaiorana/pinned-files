@@ -120,6 +120,9 @@ export default class PinnedFilesPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("active-leaf-change", () => {
         this.updateActiveStates();
+        // A new tab becomes active right away, while Obsidian's layout-change
+        // can lag by most of a second; this gets its pinned files on at once.
+        this.updateEmptyTabActions();
       })
     );
 

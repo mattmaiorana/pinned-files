@@ -6,7 +6,7 @@ import { App, TFile, WorkspaceLeaf, setIcon } from "obsidian";
 //   "New note", "New base", and "Go to file", copying their classes so they
 //   look native.
 // - "section": a labeled "Pinned" list placed after that action list, one row
-//   per file with its folder underneath.
+//   per file (the full path shows on hover).
 // Each opens its file in that same tab.
 
 export type NewTabStyle = "buttons" | "section";
@@ -36,11 +36,6 @@ function makeActivatable(el: HTMLElement, open: () => void): void {
       open();
     }
   });
-}
-
-function folderLabel(file: TFile): string {
-  const parent = file.parent?.path ?? "";
-  return parent === "" || parent === "/" ? "Vault root" : parent;
 }
 
 export function removeEmptyTabActions(app: App): void {
@@ -76,7 +71,7 @@ export function applyEmptyTabActions(
       if (!parent) continue;
       const section = parent.createDiv({ cls: SECTION_CLASS });
       list.after(section);
-      section.createDiv({ cls: "pinned-files-new-tab-title", text: "Pinned" });
+      section.createDiv({ cls: "pinned-files-new-tab-title", text: "Pinned Files" });
       for (const file of files) {
         const row = section.createDiv({
           cls: "pinned-files-new-tab-row",
@@ -84,9 +79,7 @@ export function applyEmptyTabActions(
           attr: { tabindex: "0", role: "button", "aria-label": file.path, title: file.path },
         });
         setIcon(row.createSpan({ cls: "pinned-files-new-tab-icon" }), "pin");
-        const text = row.createSpan({ cls: "pinned-files-new-tab-text" });
-        text.createSpan({ cls: "pinned-files-new-tab-name", text: file.basename });
-        text.createSpan({ cls: "pinned-files-new-tab-path", text: folderLabel(file) });
+        row.createSpan({ cls: "pinned-files-new-tab-name", text: file.basename });
         makeActivatable(row, () => void leaf.openFile(file));
       }
       continue;

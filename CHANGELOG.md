@@ -2,6 +2,16 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.4] - 2026-10-09
+
+### Changed
+
+- The new tab page's pinned section has a line above it, is headed "Pinned Files" (was an uppercase "PINNED"), and shows only each note's name; the folder line is gone, and the full path still shows on hover.
+
+### Fixed
+
+- The pinned files now appear on a new tab at once (about 10 ms) instead of up to a second later: they're also applied on `active-leaf-change`, since Obsidian's `layout-change` can lag by most of a second.
+
 ## [1.1.3] - 2026-10-09
 
 ### Added
