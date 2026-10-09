@@ -13,7 +13,6 @@ export type NewTabStyle = "buttons" | "section";
 
 const ACTION_CLASS = "pinned-files-empty-action";
 const SECTION_CLASS = "pinned-files-new-tab-section";
-const HEADING = "Pinned Files";
 
 function actionList(leaf: WorkspaceLeaf): HTMLElement | null {
   return leaf.view.containerEl.querySelector<HTMLElement>(
@@ -50,8 +49,9 @@ export function applyEmptyTabActions(
   app: App,
   pinnedPaths: string[],
   style: NewTabStyle,
-  showHeading: boolean
+  heading: string | null
 ): void {
+  const showHeading = heading !== null;
   for (const leaf of app.workspace.getLeavesOfType("empty")) {
     const list = actionList(leaf);
     if (!list) continue;
@@ -60,7 +60,7 @@ export function applyEmptyTabActions(
       .filter((f): f is TFile => f instanceof TFile);
     // Rebuild only when what's shown changes, so an unrelated layout change
     // never destroys a button mid-click or drops its focus.
-    const signature = `${style} ${showHeading}\n` + files.map((f) => f.path).join("\n");
+    const signature = `${style}\n${heading ?? ""}\n` + files.map((f) => f.path).join("\n");
     if (list.dataset.pinnedFiles === signature) continue;
     clear(list);
     list.dataset.pinnedFiles = signature;
@@ -74,7 +74,7 @@ export function applyEmptyTabActions(
       const section = parent.createDiv({ cls: SECTION_CLASS });
       list.after(section);
       if (showHeading) {
-        section.createDiv({ cls: "pinned-files-new-tab-title", text: HEADING });
+        section.createDiv({ cls: "pinned-files-new-tab-title", text: heading ?? "" });
       }
       for (const file of files) {
         const row = section.createDiv({
@@ -92,7 +92,7 @@ export function applyEmptyTabActions(
     if (showHeading) {
       list.createDiv({
         cls: `pinned-files-new-tab-title ${ACTION_CLASS}`,
-        text: HEADING,
+        text: heading ?? "",
       });
     }
     for (const file of files) {

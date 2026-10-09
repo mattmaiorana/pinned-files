@@ -9,6 +9,17 @@ export interface PinnedFilesSettings {
   showOnNewTab: boolean;
   newTabStyle: NewTabStyle;
   newTabHeading: boolean;
+  sectionTitleText: string;
+  newTabHeadingText: string;
+}
+
+/** The default text for both the sidebar title and the new tab heading. */
+export const DEFAULT_TITLE = "Pinned Files";
+
+/** The title to show: the user's text, or the default when it's blank. */
+export function titleText(value: string | undefined): string {
+  const trimmed = (value ?? "").trim();
+  return trimmed === "" ? DEFAULT_TITLE : trimmed;
 }
 
 export const DEFAULT_SETTINGS: PinnedFilesSettings = {
@@ -18,6 +29,8 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   showOnNewTab: true,
   newTabStyle: "section",
   newTabHeading: true,
+  sectionTitleText: DEFAULT_TITLE,
+  newTabHeadingText: DEFAULT_TITLE,
 };
 
 export class PinnedFilesSettingTab extends PluginSettingTab {
@@ -48,7 +61,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Show section title")
-      .setDesc('Show a small "pinned files" label above the pinned list.')
+      .setDesc("Show a small title above the pinned list in the sidebar.")
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.showSectionTitle)
@@ -56,8 +69,26 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
             this.plugin.settings.showSectionTitle = value;
             await this.plugin.saveSettings();
             this.plugin.refreshView();
+            // Redraw so the title text field shows or hides with it.
+            this.display();
           })
       );
+
+    if (this.plugin.settings.showSectionTitle) {
+      new Setting(containerEl)
+        .setName("Section title")
+        .setDesc(`The sidebar title's text. Leave blank for "${DEFAULT_TITLE}".`)
+        .addText((text) =>
+          text
+            .setPlaceholder(DEFAULT_TITLE)
+            .setValue(this.plugin.settings.sectionTitleText)
+            .onChange(async (value) => {
+              this.plugin.settings.sectionTitleText = value;
+              await this.plugin.saveSettings();
+              this.plugin.refreshView();
+            })
+        );
+    }
 
     new Setting(containerEl)
       .setName("Show pinned files on new tabs")
@@ -80,7 +111,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
     if (this.plugin.settings.showOnNewTab) {
       new Setting(containerEl)
         .setName("Show heading on new tabs")
-        .setDesc('Show a "Pinned Files" heading above the pinned files on the new tab page, in either style.')
+        .setDesc("Show a heading above the pinned files on the new tab page, in either style.")
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.newTabHeading)
@@ -88,8 +119,26 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
               this.plugin.settings.newTabHeading = value;
               await this.plugin.saveSettings();
               this.plugin.updateEmptyTabActions();
+              // Redraw so the heading text field shows or hides with it.
+              this.display();
             })
         );
+
+      if (this.plugin.settings.newTabHeading) {
+        new Setting(containerEl)
+          .setName("New tab heading")
+          .setDesc(`The heading's text. Leave blank for "${DEFAULT_TITLE}".`)
+          .addText((text) =>
+            text
+              .setPlaceholder(DEFAULT_TITLE)
+              .setValue(this.plugin.settings.newTabHeadingText)
+              .onChange(async (value) => {
+                this.plugin.settings.newTabHeadingText = value;
+                await this.plugin.saveSettings();
+                this.plugin.updateEmptyTabActions();
+              })
+          );
+      }
 
       new Setting(containerEl)
         .setName("Show as a separate list")

@@ -9,6 +9,7 @@ import {
   DEFAULT_SETTINGS,
   PinnedFilesSettings,
   PinnedFilesSettingTab,
+  titleText,
 } from "./settings";
 import { PinnedFilesView, VIEW_TYPE_PINNED_FILES } from "./view";
 import {
@@ -201,11 +202,13 @@ export default class PinnedFilesPlugin extends Plugin {
         this.settings.pinnedPaths
       );
       const sectionTitleChanged =
-        next.showSectionTitle !== this.settings.showSectionTitle;
+        next.showSectionTitle !== this.settings.showSectionTitle ||
+        next.sectionTitleText !== this.settings.sectionTitleText;
       const newTabChanged =
         next.showOnNewTab !== this.settings.showOnNewTab ||
         next.newTabStyle !== this.settings.newTabStyle ||
-        next.newTabHeading !== this.settings.newTabHeading;
+        next.newTabHeading !== this.settings.newTabHeading ||
+        next.newTabHeadingText !== this.settings.newTabHeadingText;
       this.settings = next;
       if (pinsChanged) {
         this.updateExplorerStyles();
@@ -308,6 +311,8 @@ export default class PinnedFilesPlugin extends Plugin {
         this.settings.pinnedPaths,
         this.settings.newTabStyle === "buttons" ? "buttons" : "section",
         this.settings.newTabHeading !== false
+          ? titleText(this.settings.newTabHeadingText)
+          : null
       );
     } else {
       removeEmptyTabActions(this.app);

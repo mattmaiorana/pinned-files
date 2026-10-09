@@ -17,7 +17,7 @@ Pinned Files adds a compact Pinned Files view to the sidebar. It is designed to 
 - Right-click a pinned item to unpin it.
 - Drag and drop pinned rows to reorder them (desktop).
 - See subtle pin indicators in the native File Explorer.
-- Open a pinned file from the new tab page: a Pinned Files section below New note and Go to file, or one button per file alongside them (settings).
+- Open a pinned file from the new tab page: a Pinned Files section below New note and Go to file, or one button per file alongside them (settings), with the heading's text, and the sidebar title's, yours to set.
 - Handles renamed or deleted pinned files automatically.
 - Supports Obsidian Sync by periodically reloading its own plugin data.
 

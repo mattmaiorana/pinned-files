@@ -1,5 +1,6 @@
 import { ItemView, Menu, setIcon, setTooltip, TFile, WorkspaceLeaf } from "obsidian";
 import type PinnedFilesPlugin from "./main";
+import { titleText } from "./settings";
 
 export const VIEW_TYPE_PINNED_FILES = "pinned-files-view";
 
@@ -63,7 +64,7 @@ export class PinnedFilesView extends ItemView {
     if (this.plugin.settings.showSectionTitle) {
       container.createDiv({
         cls: "pinned-files-section-title",
-        text: "PINNED FILES",
+        text: titleText(this.plugin.settings.sectionTitleText),
       });
     }
 
