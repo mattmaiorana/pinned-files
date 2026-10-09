@@ -89,7 +89,7 @@ For manual installation, users only need these three files from a GitHub release
 
 ## Status
 
-v1.1.6 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes and [FUTURE_PLANS.md](FUTURE_PLANS.md) for ideas under consideration.
+v1.1.1 — stable. See [CHANGELOG.md](CHANGELOG.md) for release notes and [FUTURE_PLANS.md](FUTURE_PLANS.md) for ideas under consideration.
 
 ## License
 
