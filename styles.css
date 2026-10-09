@@ -159,15 +159,19 @@
   mask-repeat: no-repeat;
 }
 
-/* Pinned section on the new tab page (newTabStyle "section"). */
+/* Pinned section on the new tab page (newTabStyle "section"). Obsidian centers
+   its action list inside .empty-state-container with text-align; when our
+   section is there, the container shrinks to its widest child and aligns left,
+   so the section's left edge lines up with the buttons and the pair stays
+   centered together. */
+.empty-state-container:has(> .pinned-files-new-tab-section) {
+  width: fit-content;
+  max-width: min(100%, 480px);
+  text-align: left;
+}
+
 .pinned-files-new-tab-section {
   margin-top: var(--size-4-6);
-  padding-top: var(--size-4-3);
-  border-top: 1px solid var(--background-modifier-border);
-  width: 100%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -179,6 +183,7 @@
 }
 
 .pinned-files-new-tab-title {
+  text-align: left;
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-semibold);
   color: var(--text-faint);

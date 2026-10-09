@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.6] - 2026-10-09
+
+### Changed
+
+- The pinned section on the new tab page lines up with Obsidian's buttons: no rule above it, the heading left-aligned, and the section's left edge on the buttons' left edge, the pair centered together (Matt's mockup). The block is capped at 480 px, longer names cut off with an ellipsis.
+
 ## [1.1.5] - 2026-10-09
 
 ### Added
