@@ -1,11 +1,12 @@
 {
   "name": "pinned-files",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Pin files for quick access in a simple sidebar view.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "lint": "eslint ."
   },
   "keywords": [
     "obsidian",
@@ -15,10 +16,15 @@
   "author": "Matt Maiorana",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@types/node": "^16.11.6",
     "esbuild": "0.17.3",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.4.0",
+    "globals": "^17.13.0",
     "obsidian": "^1.13.1",
     "tslib": "2.4.0",
-    "typescript": "4.7.4"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.1"
   }
 }

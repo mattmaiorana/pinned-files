@@ -85,6 +85,7 @@ This plugin is intentionally conservative about what it touches.
 
 - `npm run dev` — watch-mode build
 - `npm run build` — production build (type-checks then bundles)
+- `npm run lint` — Obsidian's review rules (`eslint-plugin-obsidianmd`)
 
 ## Release files
 

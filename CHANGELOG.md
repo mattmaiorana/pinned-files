@@ -2,6 +2,20 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.2.1] - 2026-10-09
+
+Clears the Obsidian review findings on 1.2.0. Nothing changes in how the plugin looks or behaves, and saved settings carry over as they are.
+
+### Changed
+
+- **The plugin's settings now appear in Obsidian's settings search.** The settings tab uses Obsidian's declarative settings API (`getSettingDefinitions()`, 1.13+) instead of drawing itself with `display()`. Settings that depend on a toggle show and hide with it through `visible` checks and `refreshDomState()`, rather than a full redraw. Every change still saves through the plugin's own `saveSettings()`, so the Sync poll's save guard covers settings changes as before.
+- The drag preview is created with `createDiv` and styled by a `.pinned-files-drag-image` class in `styles.css`, rather than `document.createElement` with inline styles.
+- The new tab page's list no longer uses a `:has()` selector. The plugin sets a `pinned-files-has-section` class on Obsidian's empty-state container while the list is there, and removes it with the list.
+
+### Development
+
+- `npm run lint` runs Obsidian's review rules (`eslint-plugin-obsidianmd`), now a dev dependency with `eslint.config.mjs`. TypeScript moved from 4.7 to 5.x, which typescript-eslint needs.
+
 ## [1.2.0] - 2026-10-09
 
 ### Added
