@@ -2,7 +2,7 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
-## [Unreleased]
+## [1.2.0] - 2026-10-09
 
 ### Added
 
