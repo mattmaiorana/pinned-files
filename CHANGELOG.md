@@ -7,7 +7,7 @@ All notable changes to Pinned Files will be documented in this file.
 ### Added
 
 - Pinned files on the new tab page, beside Obsidian's New note, New base, and Go to file. Each opens its file in that tab. Settings:
-  - "Show pinned files on new tabs" (`showOnNewTab`, default on).
+  - "Show pinned files on new tabs" (`showOnNewTab`, default off, so nothing changes until you turn it on).
   - "Show as a separate list" (`newTabStyle`, default `"section"`): a "Pinned Files" list under the buttons, one row per file with a pin icon and its name; off, one pill button per file inside Obsidian's own list instead.
   - "Show heading on new tabs" (`newTabHeading`, default on): the "Pinned Files" heading, left-aligned in both styles.
 - Your own text for both titles: "Section title" (`sectionTitleText`) for the sidebar and "New tab heading" (`newTabHeadingText`) for the new tab page, each shown in settings only while its title is on. Both default to "Pinned Files", and a blank field falls back to it. The sidebar title now shows exactly as typed, no longer forced to uppercase, and without the wide letter spacing meant for capitals; a new "Wide letter spacing" toggle (`sectionTitleSpaced`, default off) brings it back for an all-caps title. With the title off, the list gets a little room above its first row.

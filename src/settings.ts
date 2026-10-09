@@ -27,7 +27,7 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   pinnedPaths: [],
   openViewOnStartup: true,
   showSectionTitle: true,
-  showOnNewTab: true,
+  showOnNewTab: false,
   newTabStyle: "section",
   newTabHeading: true,
   sectionTitleText: DEFAULT_TITLE,
