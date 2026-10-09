@@ -93,7 +93,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
 
       new Setting(containerEl)
         .setName("Subtle title")
-        .setDesc("A smaller, quieter title shown exactly as typed, matching the new tab heading. Off: the bold all-caps title.")
+        .setDesc("A smaller, quieter title shown exactly as typed. Off: the bold all-caps title.")
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.sectionTitleSubtle)
