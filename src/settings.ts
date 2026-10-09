@@ -62,7 +62,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("Show pinned files on new tabs")
       .setDesc(
-        "Add a button for each pinned file to the new tab page, beside New note and Go to file."
+        "Add a button for each pinned file to the new tab page."
       )
       .addToggle((toggle) =>
         toggle
@@ -81,7 +81,7 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
       new Setting(containerEl)
         .setName("Show as a separate list")
         .setDesc(
-          "On: your pinned files as their own list below the new tab buttons. Off: one button per file, mixed in with New note and Go to file."
+          "On: your pinned files as their own list below the new tab buttons. Off: one button per file."
         )
         .addToggle((toggle) =>
           toggle

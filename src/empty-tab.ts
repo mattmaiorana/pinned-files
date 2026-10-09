@@ -5,7 +5,7 @@ import { App, TFile, WorkspaceLeaf, setIcon } from "obsidian";
 // - "buttons": a pill per file inside `.empty-state-action-list`, beside
 //   "New note", "New base", and "Go to file", copying their classes so they
 //   look native.
-// - "section": a "Pinned Files" list (a rule above it when the heading is off) placed after that action list, one row
+// - "section": a "Pinned Files" list placed after that action list, one row
 //   per file (the full path shows on hover).
 // Each opens its file in that same tab.
 
@@ -71,10 +71,7 @@ export function applyEmptyTabActions(
       // document (a new tab can be in a popout), then placed right after it.
       const parent = list.parentElement;
       if (!parent) continue;
-      // Without the heading, a rule above the list sets it apart instead.
-      const section = parent.createDiv({
-        cls: showHeading ? SECTION_CLASS : `${SECTION_CLASS} is-headless`,
-      });
+      const section = parent.createDiv({ cls: SECTION_CLASS });
       list.after(section);
       if (showHeading) {
         section.createDiv({ cls: "pinned-files-new-tab-title", text: HEADING });
