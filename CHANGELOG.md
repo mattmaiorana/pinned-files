@@ -2,6 +2,12 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [1.1.5] - 2026-10-09
+
+### Added
+
+- "Show heading on new tabs" (`newTabHeading`, default on): the "Pinned Files" heading can be turned off, and it now also appears in the buttons style, above the pinned buttons with a small gap.
+
 ## [1.1.4] - 2026-10-09
 
 ### Changed

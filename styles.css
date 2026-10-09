@@ -173,6 +173,11 @@
   gap: 2px;
 }
 
+.empty-state-action-list > .pinned-files-new-tab-title {
+  margin-top: var(--size-4-3);
+  padding-bottom: 0;
+}
+
 .pinned-files-new-tab-title {
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-semibold);

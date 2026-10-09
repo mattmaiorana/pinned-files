@@ -8,6 +8,7 @@ export interface PinnedFilesSettings {
   showSectionTitle: boolean;
   showOnNewTab: boolean;
   newTabStyle: NewTabStyle;
+  newTabHeading: boolean;
 }
 
 export const DEFAULT_SETTINGS: PinnedFilesSettings = {
@@ -16,6 +17,7 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   showSectionTitle: true,
   showOnNewTab: true,
   newTabStyle: "section",
+  newTabHeading: true,
 };
 
 export class PinnedFilesSettingTab extends PluginSettingTab {
@@ -82,6 +84,19 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.newTabStyle === "section")
           .onChange(async (value) => {
             this.plugin.settings.newTabStyle = value ? "section" : "buttons";
+            await this.plugin.saveSettings();
+            this.plugin.updateEmptyTabActions();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Show heading on new tabs")
+      .setDesc('Show a "Pinned Files" heading above the pinned files on the new tab page, in either style.')
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.newTabHeading)
+          .onChange(async (value) => {
+            this.plugin.settings.newTabHeading = value;
             await this.plugin.saveSettings();
             this.plugin.updateEmptyTabActions();
           })
