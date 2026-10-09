@@ -203,7 +203,8 @@ export default class PinnedFilesPlugin extends Plugin {
       );
       const sectionTitleChanged =
         next.showSectionTitle !== this.settings.showSectionTitle ||
-        next.sectionTitleText !== this.settings.sectionTitleText;
+        next.sectionTitleText !== this.settings.sectionTitleText ||
+        next.sectionTitleSpaced !== this.settings.sectionTitleSpaced;
       const newTabChanged =
         next.showOnNewTab !== this.settings.showOnNewTab ||
         next.newTabStyle !== this.settings.newTabStyle ||

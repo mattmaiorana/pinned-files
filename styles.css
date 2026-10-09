@@ -8,14 +8,23 @@
   gap: 6px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
   color: var(--text-normal);
   padding: 16px 0 8px var(--size-4-2, 8px);
+}
+
+/* "Wide letter spacing", for an all-caps title. */
+.pinned-files-section-title.is-spaced {
+  letter-spacing: 0.08em;
 }
 
 .pinned-files-list {
   display: flex;
   flex-direction: column;
+}
+
+/* With the title off, the list is first and needs its own breathing room. */
+.pinned-files-view > .pinned-files-list:first-child {
+  padding-top: var(--size-4-2, 8px);
 }
 
 .pinned-files-empty {

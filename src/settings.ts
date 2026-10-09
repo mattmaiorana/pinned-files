@@ -10,6 +10,7 @@ export interface PinnedFilesSettings {
   newTabStyle: NewTabStyle;
   newTabHeading: boolean;
   sectionTitleText: string;
+  sectionTitleSpaced: boolean;
   newTabHeadingText: string;
 }
 
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   newTabStyle: "section",
   newTabHeading: true,
   sectionTitleText: DEFAULT_TITLE,
+  sectionTitleSpaced: false,
   newTabHeadingText: DEFAULT_TITLE,
 };
 
@@ -84,6 +86,19 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
             .setValue(this.plugin.settings.sectionTitleText)
             .onChange(async (value) => {
               this.plugin.settings.sectionTitleText = value;
+              await this.plugin.saveSettings();
+              this.plugin.refreshView();
+            })
+        );
+
+      new Setting(containerEl)
+        .setName("Wide letter spacing")
+        .setDesc("Space the title's letters further apart. Good for an all-caps title; leave off for normal text.")
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.settings.sectionTitleSpaced)
+            .onChange(async (value) => {
+              this.plugin.settings.sectionTitleSpaced = value;
               await this.plugin.saveSettings();
               this.plugin.refreshView();
             })
