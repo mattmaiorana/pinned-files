@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, SettingDefinitionItem } from "obsidian";
 import type { NewTabStyle } from "./empty-tab";
 import type PinnedFilesPlugin from "./main";
 
@@ -35,6 +35,37 @@ export const DEFAULT_SETTINGS: PinnedFilesSettings = {
   newTabHeadingText: DEFAULT_TITLE,
 };
 
+/** Keys the settings tab reads and writes. All but one are settings fields;
+ * `newTabSeparateList` is a toggle view of `newTabStyle`. */
+type ControlKey =
+  | "openViewOnStartup"
+  | "showSectionTitle"
+  | "sectionTitleText"
+  | "sectionTitleSubtle"
+  | "showOnNewTab"
+  | "newTabHeading"
+  | "newTabHeadingText"
+  | "newTabSeparateList";
+
+/** Keys whose change shows or hides other settings. */
+const VISIBILITY_KEYS: ReadonlySet<string> = new Set([
+  "showSectionTitle",
+  "showOnNewTab",
+  "newTabHeading",
+]);
+
+/** Keys that only affect the new tab page; the rest affect the sidebar view. */
+const NEW_TAB_KEYS: ReadonlySet<string> = new Set([
+  "showOnNewTab",
+  "newTabHeading",
+  "newTabHeadingText",
+  "newTabSeparateList",
+]);
+
+// Declarative settings (Obsidian 1.13+, which minAppVersion requires), so
+// they show up in Obsidian's settings search. Every write goes through
+// plugin.saveSettings(), never the default setControlValue, because its
+// saveCount guard keeps the Sync poll from reading a half-written data.json.
 export class PinnedFilesSettingTab extends PluginSettingTab {
   plugin: PinnedFilesPlugin;
 
@@ -43,149 +74,95 @@ export class PinnedFilesSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  display(): void {
-    const { containerEl } = this;
-    containerEl.empty();
-
-    new Setting(containerEl)
-      .setName("Add pinned files to sidebar on startup")
-      .setDesc(
-        "Ensure the pinned files view is available in the left sidebar when Obsidian starts. The view will not steal focus from your active sidebar tab."
-      )
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.openViewOnStartup)
-          .onChange(async (value) => {
-            this.plugin.settings.openViewOnStartup = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Show section title")
-      .setDesc("Show a small title above the pinned list in the sidebar.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showSectionTitle)
-          .onChange(async (value) => {
-            this.plugin.settings.showSectionTitle = value;
-            await this.plugin.saveSettings();
-            this.plugin.refreshView();
-            // Redraw so the title text field shows or hides with it.
-            this.display();
-          })
-      );
-
-    if (this.plugin.settings.showSectionTitle) {
-      new Setting(containerEl)
-        .setName("Section title")
-        .setDesc(`The sidebar title's text. Leave blank for "${DEFAULT_TITLE}".`)
-        .addText((text) =>
-          text
-            .setPlaceholder(DEFAULT_TITLE)
-            .setValue(this.plugin.settings.sectionTitleText)
-            .onChange(async (value) => {
-              this.plugin.settings.sectionTitleText = value;
-              await this.plugin.saveSettings();
-              this.plugin.refreshView();
-            })
-        );
-
-      new Setting(containerEl)
-        .setName("Subtle title")
-        .setDesc("A smaller, quieter title shown exactly as typed. Off: the bold all-caps title.")
-        .addToggle((toggle) =>
-          toggle
-            .setValue(this.plugin.settings.sectionTitleSubtle)
-            .onChange(async (value) => {
-              this.plugin.settings.sectionTitleSubtle = value;
-              await this.plugin.saveSettings();
-              this.plugin.refreshView();
-            })
-        );
+  getControlValue(key: string): unknown {
+    if (key === "newTabSeparateList") {
+      return this.plugin.settings.newTabStyle === "section";
     }
+    return (this.plugin.settings as unknown as Record<string, unknown>)[key];
+  }
 
-    new Setting(containerEl)
-      .setName("Show pinned files on new tabs")
-      .setDesc(
-        "Add a button for each pinned file to the new tab page."
-      )
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showOnNewTab)
-          .onChange(async (value) => {
-            this.plugin.settings.showOnNewTab = value;
-            await this.plugin.saveSettings();
-            this.plugin.updateEmptyTabActions();
-            // Redraw so the new tab settings below show or hide with it.
-            this.display();
-          })
-      );
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    const settings = this.plugin.settings;
+    if (key === "newTabSeparateList") {
+      settings.newTabStyle = value ? "section" : "buttons";
+    } else {
+      (settings as unknown as Record<string, unknown>)[key] = value;
+    }
+    await this.plugin.saveSettings();
+    if (NEW_TAB_KEYS.has(key)) {
+      this.plugin.updateEmptyTabActions();
+    } else if (key !== "openViewOnStartup") {
+      this.plugin.refreshView();
+    }
+    // Show or hide the settings that depend on this one.
+    if (VISIBILITY_KEYS.has(key)) this.refreshDomState();
+  }
 
-    // The style and heading settings only matter while new tabs show pins.
-    if (this.plugin.settings.showOnNewTab) {
-      new Setting(containerEl)
-        .setName("Show heading on new tabs")
-        .setDesc("Show a heading above the pinned files on the new tab page, in either style.")
-        .addToggle((toggle) =>
-          toggle
-            .setValue(this.plugin.settings.newTabHeading)
-            .onChange(async (value) => {
-              this.plugin.settings.newTabHeading = value;
-              await this.plugin.saveSettings();
-              this.plugin.updateEmptyTabActions();
-              // Redraw so the heading text field shows or hides with it.
-              this.display();
-            })
-        );
-
-      if (this.plugin.settings.newTabHeading) {
-        new Setting(containerEl)
-          .setName("New tab heading")
-          .setDesc(`The heading's text. Leave blank for "${DEFAULT_TITLE}".`)
-          .addText((text) =>
-            text
-              .setPlaceholder(DEFAULT_TITLE)
-              .setValue(this.plugin.settings.newTabHeadingText)
-              .onChange(async (value) => {
-                this.plugin.settings.newTabHeadingText = value;
+  getSettingDefinitions(): SettingDefinitionItem<ControlKey>[] {
+    const settings = () => this.plugin.settings;
+    return [
+      {
+        name: "Add pinned files to sidebar on startup",
+        desc: "Ensure the pinned files view is available in the left sidebar when Obsidian starts. The view will not steal focus from your active sidebar tab.",
+        control: { type: "toggle", key: "openViewOnStartup" },
+      },
+      {
+        name: "Show section title",
+        desc: "Show a small title above the pinned list in the sidebar.",
+        control: { type: "toggle", key: "showSectionTitle" },
+      },
+      {
+        name: "Section title",
+        desc: `The sidebar title's text. Leave blank for "${DEFAULT_TITLE}".`,
+        visible: () => settings().showSectionTitle,
+        control: { type: "text", key: "sectionTitleText", placeholder: DEFAULT_TITLE },
+      },
+      {
+        name: "Subtle title",
+        desc: "A smaller, quieter title shown exactly as typed. Off: the bold all-caps title.",
+        visible: () => settings().showSectionTitle,
+        control: { type: "toggle", key: "sectionTitleSubtle" },
+      },
+      {
+        name: "Show pinned files on new tabs",
+        desc: "Add a button for each pinned file to the new tab page.",
+        control: { type: "toggle", key: "showOnNewTab" },
+      },
+      {
+        name: "Show heading on new tabs",
+        desc: "Show a heading above the pinned files on the new tab page, in either style.",
+        visible: () => settings().showOnNewTab,
+        control: { type: "toggle", key: "newTabHeading" },
+      },
+      {
+        name: "New tab heading",
+        desc: `The heading's text. Leave blank for "${DEFAULT_TITLE}".`,
+        visible: () => settings().showOnNewTab && settings().newTabHeading,
+        control: { type: "text", key: "newTabHeadingText", placeholder: DEFAULT_TITLE },
+      },
+      {
+        name: "Show as a separate list",
+        desc: "On: your pinned files as their own list below the new tab buttons. Off: one button per file.",
+        visible: () => settings().showOnNewTab,
+        control: { type: "toggle", key: "newTabSeparateList" },
+      },
+      {
+        name: "Clear pinned files",
+        desc: "Remove all pinned files from this list. This does not delete the files themselves.",
+        render: (setting) => {
+          setting.addButton((button) =>
+            button
+              .setButtonText("Clear all")
+              .setDestructive()
+              .onClick(async () => {
+                this.plugin.settings.pinnedPaths = [];
                 await this.plugin.saveSettings();
-                this.plugin.updateEmptyTabActions();
+                this.plugin.refreshView();
+                this.plugin.updateExplorerStyles();
               })
           );
-      }
-
-      new Setting(containerEl)
-        .setName("Show as a separate list")
-        .setDesc(
-          "On: your pinned files as their own list below the new tab buttons. Off: one button per file."
-        )
-        .addToggle((toggle) =>
-          toggle
-            .setValue(this.plugin.settings.newTabStyle === "section")
-            .onChange(async (value) => {
-              this.plugin.settings.newTabStyle = value ? "section" : "buttons";
-              await this.plugin.saveSettings();
-              this.plugin.updateEmptyTabActions();
-            })
-        );
-    }
-
-    new Setting(containerEl)
-      .setName("Clear pinned files")
-      .setDesc(
-        "Remove all pinned files from this list. This does not delete the files themselves."
-      )
-      .addButton((button) =>
-        button
-          .setButtonText("Clear all")
-          .setDestructive()
-          .onClick(async () => {
-            this.plugin.settings.pinnedPaths = [];
-            await this.plugin.saveSettings();
-            this.plugin.refreshView();
-            this.plugin.updateExplorerStyles();
-          })
-      );
+        },
+      },
+    ];
   }
 }
