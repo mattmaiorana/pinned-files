@@ -2,6 +2,13 @@
 
 All notable changes to Pinned Files will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- The buttons stay centered on the new tab page exactly as Obsidian places them; the pinned section starts at their left edge and runs right as far as a name needs (up to 480 px), instead of the pair being centered together (1.1.6).
+- The "Pinned Files" heading is centered in the buttons style and left-aligned in the section style.
+
 ## [1.1.6] - 2026-10-09
 
 ### Changed

@@ -160,24 +160,29 @@
 }
 
 /* Pinned section on the new tab page (newTabStyle "section"). Obsidian centers
-   its action list inside .empty-state-container with text-align; when our
-   section is there, the container shrinks to its widest child and aligns left,
-   so the section's left edge lines up with the buttons and the pair stays
-   centered together. */
+   its action list inside .empty-state-container with text-align. With our
+   section there, the container shrinks to the action list's width and aligns
+   left, so the buttons stay centered on screen exactly as before; the section
+   starts at the buttons' left edge and runs right past the container. Its
+   negative right margin cancels its width in the container's sizing, so a
+   long pinned name never pushes the buttons off center. */
 .empty-state-container:has(> .pinned-files-new-tab-section) {
   width: fit-content;
-  max-width: min(100%, 480px);
   text-align: left;
 }
 
 .pinned-files-new-tab-section {
   margin-top: var(--size-4-6);
+  width: max-content;
+  max-width: 480px;
+  margin-right: -480px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .empty-state-action-list > .pinned-files-new-tab-title {
+  text-align: center;
   margin-top: var(--size-4-3);
   padding-bottom: 0;
 }
